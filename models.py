@@ -37,3 +37,16 @@ class PrivilegedPlayer(db.Model):
 
     user = db.relationship('User', backref=db.backref('privileged_status', lazy=True))
     season = db.relationship('Season', backref=db.backref('privileged_players', lazy=True))
+
+class GameSession(db.Model):
+    __tablename__ = 'game_sessions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    word_id = db.Column(db.Integer, db.ForeignKey('words.id'), nullable=False)
+    attempts_left = db.Column(db.Integer, nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    user = db.relationship('User', backref=db.backref('game_sessions', lazy=True))
+    word = db.relationship('Word', backref=db.backref('game_sessions', lazy=True))
