@@ -15,3 +15,25 @@ class Word(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
 
     user = db.relationship('User', backref=db.backref('words', lazy=True))
+
+class Season(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    end_date = db.Column(db.DateTime, nullable=True)
+
+class Leaderboard(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
+    words_guessed = db.Column(db.Integer, default=0)
+
+    user = db.relationship('User', backref=db.backref('leaderboard_entries', lazy=True))
+    season = db.relationship('Season', backref=db.backref('leaderboard_entries', lazy=True))
+
+class PrivilegedPlayer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('privileged_status', lazy=True))
+    season = db.relationship('Season', backref=db.backref('privileged_players', lazy=True))
