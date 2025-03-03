@@ -3,3 +3,4 @@ python-dotenv
 flask-sqlalchemy
 psycopg2
 sqlalchemy
+aiogram
