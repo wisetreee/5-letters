@@ -1,6 +1,6 @@
 stages:
-  setup
-  lint
+  - setup
+  - lint
 
 frontend_install_dependencies:
   stage: setup
