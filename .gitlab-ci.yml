@@ -1,0 +1,15 @@
+stages:
+  - frontend-lint
+
+eslint:
+  stage: frontend-lint
+  image: node:18 
+  cache:
+    paths:
+      - frontend/node_modules/  
+  script:
+    - cd frontend  
+    - npm install  
+    - npm run lint  
+  only:
+    - merge_requests  
