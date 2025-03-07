@@ -6,6 +6,42 @@ game_bp = Blueprint('game', __name__)
 
 ATTEMPTS_BY_LENGTH = {3: 7, 4: 6, 5: 6, 6: 5, 7: 5, 8: 4, 9: 4, 10: 3}
 
+@game_bp.route('/game/daily', methods=['GET'])
+def get_daily_word():
+    user_id = request.args.get('user_id', type=int)
+    if not user_id:
+        return jsonify({'error': 'User ID is required'}), 400
+
+    daily_word = Word.query.filter_by(daily=True).order_by(Word.updated_at.desc()).first()
+
+    if not daily_word:
+        return jsonify({'error': 'No daily word available'}), 404
+
+    previous_session = GameSession.query.filter_by(user_id=user_id, word_id=daily_word.id, completed=True).first()
+    if previous_session:
+        return jsonify({'error': 'You have already played with the daily word.'}), 400
+
+    existing_session = GameSession.query.filter_by(user_id=user_id, word_id=daily_word.id, completed=False).first()
+    if existing_session:
+        return jsonify({'message': 'You already have an active game with the daily word.'}), 400
+
+    existing_sessions = GameSession.query.filter_by(user_id=user_id, completed=False).all()
+    for session in existing_sessions:
+        db.session.delete(session)
+    db.session.commit()
+
+    attempts = ATTEMPTS_BY_LENGTH.get(daily_word.length, 3)
+
+    session = GameSession(user_id=user_id, word_id=daily_word.id, attempts_left=attempts, completed=False)
+    db.session.add(session)
+    db.session.commit()
+
+    return jsonify({
+        'game_id': session.id,
+        'word_length': daily_word.length,
+        'attempts_left': attempts
+    })
+
 @game_bp.route('/game/start', methods=['GET'])
 def start_game():
     user_id = request.args.get('user_id', type=int)
