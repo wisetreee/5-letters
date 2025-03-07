@@ -1,0 +1,28 @@
+stages:
+  - setup
+  - lint
+
+frontend_install_dependencies:
+  stage: setup
+  image: node:18
+  cache:
+    key: frontend-dependencies
+    paths:
+      - frontend/node_modules/
+  script:
+    - cd frontend
+    - npm install
+  artifacts:
+    paths:
+      - frontend/node_modules/
+
+frontend_lint:
+  stage: lint
+  image: node:18
+  cache:
+    key: frontend-dependencies
+    paths:
+      - frontend/node_modules/
+  script:
+    - cd frontend
+    - npm run lint
