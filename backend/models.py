@@ -1,4 +1,4 @@
-from database import db
+from backend.database import db
 from datetime import datetime
 
 class User(db.Model):
@@ -47,6 +47,7 @@ class GameSession(db.Model):
     attempts_left = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    result = db.Column(db.String(4), nullable=True)
     
     user = db.relationship('User', backref=db.backref('game_sessions', lazy=True))
     word = db.relationship('Word', backref=db.backref('game_sessions', lazy=True))
