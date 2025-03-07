@@ -1,4 +1,4 @@
-from database import db
+from backend.database import db
 from datetime import datetime
 
 class User(db.Model):
@@ -10,9 +10,10 @@ class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(10), unique=True, nullable=False)
     length = db.Column(db.Integer, nullable=False)
-    daily = db.Column(db.Boolean, default=False)
+    daily = db.Column(db.Boolean, default=False, nullable=False)
     added_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.Date, nullable=True)
 
     user = db.relationship('User', backref=db.backref('words', lazy=True))
 
@@ -47,6 +48,7 @@ class GameSession(db.Model):
     attempts_left = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    result = db.Column(db.String(4), nullable=True)
     
     user = db.relationship('User', backref=db.backref('game_sessions', lazy=True))
     word = db.relationship('Word', backref=db.backref('game_sessions', lazy=True))
