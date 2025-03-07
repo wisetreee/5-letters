@@ -18,7 +18,7 @@ class Word(db.Model):
 
 class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    start_date = db.Column(db.DateTime, default=datetime.now)
     end_date = db.Column(db.DateTime, nullable=True)
 
 class Leaderboard(db.Model):
@@ -42,11 +42,11 @@ class GameSession(db.Model):
     __tablename__ = 'game_sessions'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    word_id = db.Column(db.Integer, db.ForeignKey('words.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    word_id = db.Column(db.Integer, db.ForeignKey('word.id'), nullable=False)
     attempts_left = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
     
     user = db.relationship('User', backref=db.backref('game_sessions', lazy=True))
     word = db.relationship('Word', backref=db.backref('game_sessions', lazy=True))

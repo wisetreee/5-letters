@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from database import db
-from models import GameSession, Word
+from backend.database import db
+from backend.models import GameSession, Word
 
 game_bp = Blueprint('game', __name__)
 
@@ -12,17 +12,17 @@ def start_game():
     if not user_id:
         return jsonify({'error': 'User ID is required'}), 400
     
-    word = Word.query.order_by(db.func.random()).first()
+    word = Word.query.order_by(db.text('random()')).first()
     if not word:
         return jsonify({'error': 'No words available'}), 500
     
-    attempts = ATTEMPTS_BY_LENGTH.get(len(word.word), 3)
+    attempts = ATTEMPTS_BY_LENGTH.get(word.length, 3)
     
     session = GameSession(user_id=user_id, word_id=word.id, attempts_left=attempts, completed=False)
     db.session.add(session)
     db.session.commit()
     
-    return jsonify({'game_id': session.id, 'word_length': len(word.word), 'attempts_left': attempts})
+    return jsonify({'game_id': session.id, 'word_length': word.length, 'attempts_left': attempts})
 
 @game_bp.route('/game/guess', methods=['POST'])
 def guess_word():
@@ -41,8 +41,8 @@ def guess_word():
     if guess == word.word:
         session.completed = True
         db.session.commit()
-        return jsonify({'result': 'win', 'attempts_used': ATTEMPTS_BY_LENGTH[len(word.word)] - session.attempts_left + 1})
-    
+        return jsonify({'result': 'win', 'attempts_used': ATTEMPTS_BY_LENGTH.get(word.length, 3) - session.attempts_left})
+
     session.attempts_left -= 1
     if session.attempts_left <= 0:
         session.completed = True
