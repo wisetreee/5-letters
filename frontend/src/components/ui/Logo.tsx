@@ -1,4 +1,4 @@
-import EmojiIcon from "./EmojiIcon"
+import EmojiIcon from "./EmojiIcon";
 
 const Logo = () => {
   return (
@@ -10,9 +10,8 @@ const Logo = () => {
         <EmojiIcon src="/mobile-logo.svg" />
         <h2 className="font-medium">ордлик</h2>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default Logo
+export default Logo;
