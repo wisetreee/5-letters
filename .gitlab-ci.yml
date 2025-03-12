@@ -4,7 +4,7 @@ stages:
 
 frontend_install_dependencies:
   stage: setup
-  image: node:18
+  image: node:22:13
   cache:
     key: frontend-dependencies
     paths:
@@ -18,7 +18,7 @@ frontend_install_dependencies:
 
 frontend_lint:
   stage: lint
-  image: node:18
+  image: node:22:13
   cache:
     key: frontend-dependencies
     paths:

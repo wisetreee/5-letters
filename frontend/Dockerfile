@@ -1,4 +1,4 @@
-FROM node:20 AS builder
+FROM node:22.13
 
 WORKDIR /app
 
@@ -10,4 +10,6 @@ COPY . .
 
 RUN npm run build
 
-CMD ["npm", "start"]
+EXPOSE 4173
+
+CMD ["npm", "run", "preview"]
