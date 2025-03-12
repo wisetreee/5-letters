@@ -2,6 +2,7 @@ stages:
   - setup
   - lint
 
+# Установка зависимостей фронтенда
 frontend_install_dependencies:
   stage: setup
   image: node:18
@@ -16,6 +17,7 @@ frontend_install_dependencies:
     paths:
       - frontend/node_modules/
 
+# Линтинг фронтенда
 frontend_lint:
   stage: lint
   image: node:18
@@ -26,3 +28,22 @@ frontend_lint:
   script:
     - cd frontend
     - npm run lint
+
+# Линтинг Python (Flask)
+backend_lint:
+  stage: lint
+  image: python:3.11
+  cache:
+    key: backend-dependencies
+    paths:
+      - backend/.venv/
+  before_script:
+    - pip install --user virtualenv
+    - python -m venv backend/.venv
+    - source backend/.venv/bin/activate
+    - pip install flake8 black mypy
+  script:
+    - cd backend
+    - black --check .
+    - flake8 .
+    - mypy .
