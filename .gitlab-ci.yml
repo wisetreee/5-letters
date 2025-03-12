@@ -26,3 +26,21 @@ frontend_lint:
   script:
     - cd frontend
     - npm run lint
+
+backend_lint:
+  stage: lint
+  image: python:3.11
+  cache:
+    key: backend-dependencies
+    paths:
+      - backend/.venv/
+  before_script:
+    - pip install --user virtualenv
+    - python -m venv backend/.venv
+    - source backend/.venv/bin/activate
+    - pip install flake8 black mypy
+  script:
+    - cd backend
+    - black --check .
+    - flake8 .
+    - mypy .
