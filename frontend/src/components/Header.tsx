@@ -10,10 +10,10 @@ import Logo from "@/components/ui/Logo";
 
 const Header = () => {
   return (
-    <header className="container flex my-4">
+    <header className="container flex my-8 items-center">
       <div className="flex flex-1/3 justify-start">
         {window.location.pathname !== "/" && (
-          <Button size="icon">
+          <Button size="icon" variant="ghost" >
             <Undo2 />
           </Button>
         )}
