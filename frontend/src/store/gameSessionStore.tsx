@@ -17,6 +17,7 @@ interface GameSessionState {
   wordLength: number;
   gameState: GameState;
   currentRow: number;
+  currentGuess: string;
   letterStates: LetterStates;
   startGame: () => void;
   makeGuess: (guessWord: string) => void;
@@ -32,6 +33,7 @@ const useGameSessionStore = create<GameSessionState>()(
       wordLength: 5,
       gameState: 'inactive',
       currentRow: 0,
+      currentGuess: "",
       letterStates: {},
 
       startGame: async () => {
@@ -74,26 +76,29 @@ const useGameSessionStore = create<GameSessionState>()(
       },
 
       onKeyPress: (key: string) => {
-        const { board, wordLength, currentRow, gameState, makeGuess } = get();
-        if (gameState !== 'playing' || currentRow >= board.length) return;
+        const { wordLength, board, currentRow, gameState, currentGuess, makeGuess } = get();
+        if (gameState !== "playing" || currentRow >= board.length) return;
 
-        const currentGuess = board[currentRow].map((tile) => tile.letter).join('');
-
-        if (key === 'ENTER') {
+        if (key === "ENTER") {
           if (currentGuess.length === wordLength) {
             makeGuess(currentGuess);
+            set({ currentGuess: "" });
           }
-        } else if (key === 'BACKSPACE') {
-          if (currentGuess.length > 0) {
+        } else if (key === "BACKSPACE") {
+          set ({ currentGuess: currentGuess.slice(0, -1) });
+          const index = currentGuess.length - 1;
+          if (index >= 0) {
             const newBoard = [...board];
-            const index = currentGuess.length - 1;
-            newBoard[currentRow][index] = { letter: '', state: 'empty' };
+            newBoard[currentRow][index] = { letter: "", state: "empty" };
             set({ board: newBoard });
           }
-        } else if (currentGuess.length < wordLength) {
+        } else if (key.match(/^[а-яА-Я]$/) && currentGuess.length < wordLength) {
           const newBoard = [...board];
-          newBoard[currentRow][currentGuess.length] = { letter: key, state: 'empty' };
-          set({ board: newBoard });
+          newBoard[currentRow][currentGuess.length] = { letter: key, state: "empty" };
+          set({
+            board: newBoard,
+            currentGuess: currentGuess + key,
+          });
         }
       },
 
@@ -104,6 +109,7 @@ const useGameSessionStore = create<GameSessionState>()(
           wordLength: 5,
           gameState: 'inactive',
           currentRow: 0,
+          currentGuess: "",
           letterStates: {},
         });
       },

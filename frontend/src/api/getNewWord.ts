@@ -1,7 +1,7 @@
-const currentWord = "ппппп";
+const currentWord = "спорт";
 
 export const getNewWord = async (userId: number) => {
-    const attemptsLeft = currentWord.length+1; // Сбрасываем попытки
+    const attemptsLeft = 6; // Сбрасываем попытки
   
     return {
       userId: userId,
