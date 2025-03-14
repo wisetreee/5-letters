@@ -10,7 +10,7 @@ const StatsCard = () => {
   return (
     <Card>
       <CardHeader>
-        <EmojiIcon src="/emoji/stats.svg" />
+        <EmojiIcon width={48} height={48} src="/emoji/stats.svg" />
         <CardTitle>
           <h2>Статистика</h2>
         </CardTitle>
