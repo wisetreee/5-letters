@@ -12,6 +12,7 @@ const Board = () => {
               key={`${rowIndex}-${colIndex}`}
               letter={tile.letter}
               state={tile.state}
+              delay={colIndex * 150}
             />
           ))}
         </div>
