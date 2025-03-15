@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import  useGameSessionStore  from "@/store/gameSessionStore"; 
 import { RotateCcw, Undo2 } from "lucide-react";
-import EmojiIcon from "./EmojiIcon";
+import EmojiIcon from "../ui/EmojiIcon";
 import { useNavigate } from "react-router";
 
 interface WinModalProps {

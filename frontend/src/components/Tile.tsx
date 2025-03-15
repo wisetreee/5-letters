@@ -6,25 +6,26 @@ interface TileProps {
   letter?: string;
   state: TileState;
   delay?: number;
+  inactive?: boolean;
 }
 
-export default function Tile({ letter, state = "empty", delay = 0 }: TileProps) {
+export default function Tile({ letter, state = "empty", delay = 0, inactive = false }: TileProps) {
   const [isBouncing, setIsBouncing] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
   const [tileState, setTileState] = useState<TileState>(state);
 
 
   useEffect(() => {
-    if (letter) {
+    if (letter && !inactive) {
       setIsBouncing(true);
       const timeout = setTimeout(() => setIsBouncing(false), 150);
       return () => clearTimeout(timeout);
     }
-  }, [letter]);
+  }, [letter, inactive]);
 
 
   useEffect(() => {
-    if (state !== "empty") {
+    if (state !== "empty" && !inactive) {
       setTimeout(() => {
         setIsFlipping(true); 
         setTileState(state); 
@@ -33,7 +34,7 @@ export default function Tile({ letter, state = "empty", delay = 0 }: TileProps) 
         }, 500); // Время анимации переворота
       }, delay);
     }
-  }, [state, delay]);
+  }, [state, delay, inactive]);
 
   return (
     <div

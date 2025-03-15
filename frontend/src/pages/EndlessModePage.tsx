@@ -1,8 +1,8 @@
 
 import Board from "@/components/Board"
 import Keyboard from "@/components/Keyboard";
-import LoseModal from "@/components/ui/LoseModal";
-import WinModal from "@/components/ui/WinModal";
+import LoseModal from "@/components/modals/LoseModal";
+import WinModal from "@/components/modals/WinModal";
 import useGameSessionStore from "@/store/gameSessionStore";
 import { useEffect, useState } from "react";
 
