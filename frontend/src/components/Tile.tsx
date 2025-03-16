@@ -26,12 +26,16 @@ export default function Tile({ letter, state = "empty", delay = 0, inactive = fa
 
   useEffect(() => {
     if (state !== "empty" && !inactive) {
-      setTimeout(() => {
-        setIsFlipping(true); 
-        setTileState(state); 
-        setTimeout(() => {
-          setIsFlipping(false);
-        }, 500); // Время анимации переворота
+      setTimeout(() => {       
+        setIsFlipping(true);
+        
+        setTimeout(() => {        
+          setTileState(state);           
+        }, 500);     
+
+        setTimeout(() => {   
+          setIsFlipping(false);             
+        }, 1000);
       }, delay);
     }
   }, [state, delay, inactive]);
@@ -41,9 +45,9 @@ export default function Tile({ letter, state = "empty", delay = 0, inactive = fa
       className={cn(
         "size-12 sm:size-20 border-2 flex items-center justify-center rounded-md",
         "text-2xl sm:text-4xl font-semibold uppercase transition-all transform",
-        "will-change-transform", // Оптимизация анимации
+        "will-change-transform border-accent-1", // Оптимизация анимации
         {
-          "border-accent-1": state === "empty",
+          // "border-accent-1": state === "empty",
           "bg-accent-1 text-white border-accent-1": tileState === "correct",
           "bg-accent-2 text-white border-accent-2": tileState === "present",
           "bg-accent-3 text-white border-accent-3": tileState === "absent",
