@@ -1,6 +1,9 @@
 import { LetterStates, TileState } from "./types";
 
-export const compareWords = (guessWord: string, targetWord: string): TileState[] => {
+export const compareWords = (
+  guessWord: string,
+  targetWord: string,
+): TileState[] => {
   const guessWordArray = guessWord.toLowerCase().split("");
   const targetWordArray = targetWord.toLowerCase().split("");
   const states: TileState[] = Array(guessWordArray.length).fill("absent");
@@ -32,12 +35,16 @@ export const compareWords = (guessWord: string, targetWord: string): TileState[]
   return states;
 };
 
-export const updateLetterStates = (guessWord: string, states: TileState[], oldLetterStates: LetterStates) => {
+export const updateLetterStates = (
+  guessWord: string,
+  states: TileState[],
+  oldLetterStates: LetterStates,
+) => {
   const newStates = { ...oldLetterStates };
   for (let i = 0; i < guessWord.length; i++) {
     const letter = guessWord[i];
     const state = states[i];
     newStates[letter] = state;
   }
-  return (newStates);
+  return newStates;
 };

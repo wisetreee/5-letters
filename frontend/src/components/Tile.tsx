@@ -9,11 +9,15 @@ interface TileProps {
   inactive?: boolean;
 }
 
-export default function Tile({ letter, state = "empty", delay = 0, inactive = false }: TileProps) {
+export default function Tile({
+  letter,
+  state = "empty",
+  delay = 0,
+  inactive = false,
+}: TileProps) {
   const [isBouncing, setIsBouncing] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
   const [tileState, setTileState] = useState<TileState>(state);
-
 
   useEffect(() => {
     if (letter && !inactive) {
@@ -23,18 +27,17 @@ export default function Tile({ letter, state = "empty", delay = 0, inactive = fa
     }
   }, [letter, inactive]);
 
-
   useEffect(() => {
     if (state !== "empty" && !inactive) {
-      setTimeout(() => {       
+      setTimeout(() => {
         setIsFlipping(true);
-        
-        setTimeout(() => {        
-          setTileState(state);           
-        }, 500);     
 
-        setTimeout(() => {   
-          setIsFlipping(false);             
+        setTimeout(() => {
+          setTileState(state);
+        }, 500);
+
+        setTimeout(() => {
+          setIsFlipping(false);
         }, 1000);
       }, delay);
     }
@@ -47,13 +50,12 @@ export default function Tile({ letter, state = "empty", delay = 0, inactive = fa
         "text-2xl sm:text-4xl font-semibold uppercase transition-all transform",
         "will-change-transform border-accent-1", // Оптимизация анимации
         {
-          // "border-accent-1": state === "empty",
           "bg-accent-1 text-white border-accent-1": tileState === "correct",
           "bg-accent-2 text-white border-accent-2": tileState === "present",
           "bg-accent-3 text-white border-accent-3": tileState === "absent",
           "-translate-y-1 duration-100": isBouncing,
           "animate-flip": isFlipping,
-        }
+        },
       )}
     >
       {letter}

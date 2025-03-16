@@ -16,7 +16,7 @@ const Header = () => {
     <header className="container flex my-8 items-center">
       <div className="flex flex-1/3 justify-start">
         {window.location.pathname !== "/" && (
-          <Button size="icon" variant="ghost" >
+          <Button size="icon" variant="ghost">
             <Undo2 />
           </Button>
         )}
@@ -26,10 +26,13 @@ const Header = () => {
       </div>
       <div className="flex flex-1/3 justify-end">
         <div className="hidden sm:flex sm:gap-2">
-
-           <Button size="icon" variant="ghost" onClick={() => setHowToPlayModalOpen(true)}>
-             <CircleHelp />
-           </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setHowToPlayModalOpen(true)}
+          >
+            <CircleHelp />
+          </Button>
 
           <Button size="icon" variant="ghost">
             <Settings />
@@ -42,7 +45,10 @@ const Header = () => {
           <AlignJustify />
         </Button>
       </div>
-      <HowToPlayModal isOpen={HowToPlayModalOpen} onClose={() => setHowToPlayModalOpen(false)} />
+      <HowToPlayModal
+        isOpen={HowToPlayModalOpen}
+        onClose={() => setHowToPlayModalOpen(false)}
+      />
     </header>
   );
 };

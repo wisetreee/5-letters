@@ -3,7 +3,6 @@ interface EmojiIconProps {
   width?: number;
   height?: number;
   alt?: string;
-
 }
 
 const EmojiIcon: React.FC<EmojiIconProps> = ({ src, width, height, alt }) => {

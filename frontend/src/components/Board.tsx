@@ -18,7 +18,7 @@ const Board = () => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default Board
+export default Board;

@@ -1,10 +1,10 @@
-import { LetterStates, TileState } from '@/lib/types';
-import { create } from 'zustand';
-import { GameState } from '@/lib/types';
-import { updateLetterStates } from '@/lib/gameUtils';
-import { persist } from 'zustand/middleware';
-import { getNewWord } from '@/api/getNewWord';
-import { sendGuess } from '@/api/sendGuess';
+import { LetterStates, TileState } from "@/lib/types";
+import { create } from "zustand";
+import { GameState } from "@/lib/types";
+import { updateLetterStates } from "@/lib/gameUtils";
+import { persist } from "zustand/middleware";
+import { getNewWord } from "@/api/getNewWord";
+import { sendGuess } from "@/api/sendGuess";
 
 interface Tile {
   letter: string;
@@ -31,7 +31,7 @@ const useGameSessionStore = create<GameSessionState>()(
       board: [],
       gameId: null,
       wordLength: 5,
-      gameState: 'inactive',
+      gameState: "inactive",
       currentRow: 0,
       currentGuess: "",
       letterStates: {},
@@ -44,11 +44,14 @@ const useGameSessionStore = create<GameSessionState>()(
 
         set({
           board: Array.from({ length: attemptsLeft }, () =>
-            Array.from({ length: wordLength }, () => ({ letter: '', state: 'empty' }))
+            Array.from({ length: wordLength }, () => ({
+              letter: "",
+              state: "empty",
+            })),
           ),
           gameId,
           wordLength,
-          gameState: 'playing',
+          gameState: "playing",
           currentRow: 0,
           letterStates: {},
         });
@@ -62,7 +65,7 @@ const useGameSessionStore = create<GameSessionState>()(
         const { feedback, result } = response;
 
         const updatedBoard = [...board];
-        updatedBoard[currentRow] = guessWord.split('').map((letter, i) => ({
+        updatedBoard[currentRow] = guessWord.split("").map((letter, i) => ({
           letter,
           state: feedback[i],
         }));
@@ -71,30 +74,44 @@ const useGameSessionStore = create<GameSessionState>()(
           board: updatedBoard,
           currentRow: currentRow + 1,
           letterStates: updateLetterStates(guessWord, feedback, letterStates),
-          gameState: result=="win" ? "win" : result=="lose" ? "lost" : "playing",
+          gameState:
+            result == "win" ? "win" : result == "lose" ? "lost" : "playing",
         });
       },
 
       onKeyPress: (key: string) => {
-        const { wordLength, board, currentRow, gameState, currentGuess, makeGuess } = get();
+        const {
+          wordLength,
+          board,
+          currentRow,
+          gameState,
+          currentGuess,
+          makeGuess,
+        } = get();
         if (gameState !== "playing" || currentRow >= board.length) return;
 
-        if (key === "ENTER") {
+        if (key.toUpperCase() === "ENTER") {
           if (currentGuess.length === wordLength) {
             makeGuess(currentGuess);
             set({ currentGuess: "" });
           }
-        } else if (key === "BACKSPACE") {
-          set ({ currentGuess: currentGuess.slice(0, -1) });
+        } else if (key.toUpperCase() === "BACKSPACE") {
+          set({ currentGuess: currentGuess.slice(0, -1) });
           const index = currentGuess.length - 1;
           if (index >= 0) {
             const newBoard = [...board];
             newBoard[currentRow][index] = { letter: "", state: "empty" };
             set({ board: newBoard });
           }
-        } else if (key.match(/^[а-яА-Я]$/) && currentGuess.length < wordLength) {
+        } else if (
+          key.toUpperCase().match(/^[а-яА-Я]$/) &&
+          currentGuess.length < wordLength
+        ) {
           const newBoard = [...board];
-          newBoard[currentRow][currentGuess.length] = { letter: key, state: "empty" };
+          newBoard[currentRow][currentGuess.length] = {
+            letter: key,
+            state: "empty",
+          };
           set({
             board: newBoard,
             currentGuess: currentGuess + key,
@@ -107,7 +124,7 @@ const useGameSessionStore = create<GameSessionState>()(
           board: [],
           gameId: null,
           wordLength: 5,
-          gameState: 'inactive',
+          gameState: "inactive",
           currentRow: 0,
           currentGuess: "",
           letterStates: {},
@@ -115,9 +132,9 @@ const useGameSessionStore = create<GameSessionState>()(
       },
     }),
     {
-      name: 'game-session-store',
-    }
-  )
+      name: "game-session-store",
+    },
+  ),
 );
 
 export default useGameSessionStore;
