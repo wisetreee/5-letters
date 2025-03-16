@@ -17,10 +17,10 @@ const EndlessModePage = () => {
       startGame();
     }
     if (gameState === "win") {
-      setWinModalOpen(true);
+      setTimeout(() => setWinModalOpen(true), 2000);
     }
     if (gameState === "lost") {
-      setLoseModalOpen(true);
+      setTimeout(() => setLoseModalOpen(true), 2000);
     }
   },[gameState, startGame])
   return (
