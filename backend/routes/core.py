@@ -6,7 +6,7 @@ game_bp = Blueprint('game', __name__)
 
 ATTEMPTS_BY_LENGTH = {3: 7, 4: 6, 5: 6, 6: 5, 7: 5, 8: 4, 9: 4, 10: 3}
 
-@game_bp.route('/game/daily', methods=['GET'])
+@game_bp.route('api/game/daily', methods=['GET'])
 def get_daily_word():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
@@ -42,7 +42,7 @@ def get_daily_word():
         'attempts_left': attempts
     })
 
-@game_bp.route('/game/start', methods=['GET'])
+@game_bp.route('api/game/start', methods=['GET'])
 def start_game():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
@@ -118,5 +118,5 @@ def guess_word():
         return jsonify({'result': 'lose', 'correct_word': correct_word, 'feedback': result})
 
     db.session.commit()
-    return jsonify({'result': 'incorrect', 'attempts_left': session.attempts_left, 'feedback': result})
+    return jsonify({'result': 'incorrect', 'feedback': result})
 
