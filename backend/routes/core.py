@@ -67,7 +67,7 @@ def start_game():
     return jsonify({'game_id': session.id, 'word_length': word.length, 'attempts_left': attempts})
 
 
-@game_bp.route('/game/guess', methods=['POST'])
+@game_bp.route('api/game/guess', methods=['POST'])
 def guess_word():
     data = request.json
     game_id = data.get('game_id')
