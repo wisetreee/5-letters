@@ -3,12 +3,12 @@ import EmojiIcon from "./EmojiIcon";
 const Logo = () => {
   return (
     <div>
-      <div className="sm:hidden">
+      <div className="md:hidden">
         <EmojiIcon src="/mobile-logo.svg" />
       </div>
-      <div className="hidden sm:flex sm:gap-1 sm:items-center">
-        <EmojiIcon src="/mobile-logo.svg" />
-        <h2 className="font-medium">ордлик</h2>
+      <div className="hidden md:flex md:gap-1 md:items-center">
+        <EmojiIcon width={72} height={72} src="/mobile-logo.svg" />
+        <h1 className="font-medium">ордлик</h1>
       </div>
     </div>
   );

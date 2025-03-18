@@ -10,7 +10,7 @@ const NewWordsCard = () => {
   return (
     <Card>
       <CardHeader>
-        <EmojiIcon src="/emoji/pencil.svg" />
+        <EmojiIcon width={48} height={48} src="/emoji/pencil.svg" />
         <CardTitle>
           <h2>Новые слова</h2>
         </CardTitle>

@@ -11,7 +11,7 @@ const DailyTaskCard = () => {
     <Card>
       <CardHeader>
         <div className="flex justify-between items-start">
-          <EmojiIcon src="/emoji/stopwatch.svg" />
+          <EmojiIcon width={48} height={48} src="/emoji/stopwatch.svg" />
           <div className="flex items-center gap-1">
             <p>25</p>
             <EmojiIcon width={24} height={24} src="/emoji/star.svg" />
