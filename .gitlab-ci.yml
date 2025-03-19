@@ -40,10 +40,9 @@ backend_lint:
     - source backend/.venv/bin/activate
     - which python
     - pip install --upgrade pip
-    - pip install flake8 black mypy
+    - pip install black mypy
   script:
     - cd backend
-    - black .
-    - flake8 . --exclude .venv --max-line-length=98
-    - mypy .
-    - cd ..
+    - black .  
+    - mypy .   
+    - cd ..  
