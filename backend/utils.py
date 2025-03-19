@@ -1,5 +1,5 @@
-from backend.database import db
-from backend.models import Season
+from database import db
+from models import Season
 from sqlalchemy import desc
 
 

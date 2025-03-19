@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from backend.database import db
-from backend.models import Leaderboard, User
+from database import db
+from models import Leaderboard, User
 from utils import get_latest_season
 
 leaderboard_bp = Blueprint('leaderboard', __name__, url_prefix='/api/leaderboard')

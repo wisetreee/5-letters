@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
-from backend.database import db
-from backend.models import GameSession, Word, Leaderboard
+from database import db
+from models import GameSession, Word, Leaderboard
 from utils import get_latest_season
 
 
-game_bp = Blueprint('game', __name__, url_prefix='api/game')
+game_bp = Blueprint('game', __name__, url_prefix='/api/game')
 
 ATTEMPTS_BY_LENGTH = {3: 7, 4: 6, 5: 6, 6: 5, 7: 5, 8: 4, 9: 4, 10: 3}
 

@@ -1,8 +1,8 @@
 from flask import Flask
-from backend.database import init_db, db
-from backend.routes.core import game_bp
+from database import init_db, db
+from routes.core import game_bp
 from flask_migrate import Migrate
-from backend.scheduler import start_scheduler
+from scheduler import start_scheduler
 
 
 app = Flask(__name__)

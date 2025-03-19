@@ -1,7 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
-from backend.database import db
-from backend.models import Word
+from database import db
+from models import Word
 
 def select_daily_word():
     word = Word.query.filter_by(daily=False).order_by(db.func.random()).first()
