@@ -1,12 +1,14 @@
 from flask import Blueprint, request, jsonify
 from backend.database import db
-from backend.models import GameSession, Word
+from backend.models import GameSession, Word, Leaderboard
+from utils import get_latest_season
 
-game_bp = Blueprint('game', __name__)
+
+game_bp = Blueprint('game', __name__, url_prefix='api/game')
 
 ATTEMPTS_BY_LENGTH = {3: 7, 4: 6, 5: 6, 6: 5, 7: 5, 8: 4, 9: 4, 10: 3}
 
-@game_bp.route('api/game/daily', methods=['GET'])
+@game_bp.route('/daily', methods=['GET'])
 def get_daily_word():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
@@ -42,7 +44,7 @@ def get_daily_word():
         'attempts_left': attempts
     })
 
-@game_bp.route('api/game/start', methods=['GET'])
+@game_bp.route('/start', methods=['GET'])
 def start_game():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
@@ -67,7 +69,7 @@ def start_game():
     return jsonify({'game_id': session.id, 'word_length': word.length, 'attempts_left': attempts})
 
 
-@game_bp.route('api/game/guess', methods=['POST'])
+@game_bp.route('/guess', methods=['POST'])
 def guess_word():
     data = request.json
     game_id = data.get('game_id')
@@ -93,27 +95,38 @@ def guess_word():
 
     for i in range(len(correct_word)):
         if guessed_letters[i] == correct_letters[i]:
-            result.append('correct')  
-            correct_letters[i] = None  
+            result.append('correct')
+            correct_letters[i] = None
         else:
             result.append(None)
 
     for i in range(len(correct_word)):
-        if result[i] is None: 
+        if result[i] is None:
             if guessed_letters[i] in correct_letters:
-                result[i] = 'present' 
+                result[i] = 'present'
                 correct_letters[correct_letters.index(guessed_letters[i])] = None
             else:
                 result[i] = 'absent'
 
     session.attempts_left -= 1
+    session.completed = session.attempts_left <= 0 or guess == correct_word
+
     if guess == correct_word:
-        session.completed = True
+        leaderboard_entry = Leaderboard.query.filter_by(user_id=session.user_id, season_id=get_latest_season()).first()
+        if leaderboard_entry:
+            leaderboard_entry.words_guessed += 1
+        else:
+            leaderboard_entry = Leaderboard(user_id=session.user_id, season_id=get_latest_season(), words_guessed=1)
+            db.session.add(leaderboard_entry)
+
         db.session.commit()
-        return jsonify({'result': 'win', 'feedback': result, 'attempts_used': ATTEMPTS_BY_LENGTH.get(len(word.word), 3) - session.attempts_left})
+        return jsonify({
+            'result': 'win',
+            'feedback': result,
+            'attempts_used': ATTEMPTS_BY_LENGTH.get(len(word.word), 3) - session.attempts_left
+        })
 
     if session.attempts_left <= 0:
-        session.completed = True
         db.session.commit()
         return jsonify({'result': 'lose', 'correct_word': correct_word, 'feedback': result})
 
