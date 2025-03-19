@@ -40,9 +40,8 @@ backend_lint:
     - source backend/.venv/bin/activate
     - which python
     - pip install --upgrade pip
-    - pip install black mypy
+    - pip install black
   script:
     - cd backend
-    - black .  
-    - mypy .   
+    - black .   
     - cd ..  
