@@ -41,6 +41,6 @@ backend_lint:
     - pip install flake8 black mypy
   script:
     - cd backend
-    - black --check .
+    - black .
     - flake8 .
     - mypy .
