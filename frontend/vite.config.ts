@@ -10,4 +10,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+
+  server: {
+    host: '0.0.0.0', // Разрешить доступ с любого IP
+    port: 5173,      // Порт сервера разработки
+    hmr: false,
+  },
+
 });

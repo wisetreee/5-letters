@@ -9,7 +9,7 @@ from os import getenv
 load_dotenv()
 
 API_TOKEN = getenv('TOKEN')
-WEB_APP_URL = 'https://t.me/wordlik_bot/wordlik'
+WEB_APP_URL = getenv('WEB_APP_URL')
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()

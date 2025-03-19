@@ -44,7 +44,7 @@ def get_daily_word():
         'attempts_left': attempts
     })
 
-@game_bp.route('/start', methods=['GET'])
+@game_bp.route('/api/game/start', methods=['GET'])
 def start_game():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
