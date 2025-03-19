@@ -38,9 +38,12 @@ backend_lint:
     - pip install --user virtualenv
     - python -m venv backend/.venv
     - source backend/.venv/bin/activate
+    - which python
+    - pip install --upgrade pip
     - pip install flake8 black mypy
   script:
     - cd backend
     - black .
-    - flake8 .
+    - flake8 . --exclude .venv
     - mypy .
+    - cd ..
