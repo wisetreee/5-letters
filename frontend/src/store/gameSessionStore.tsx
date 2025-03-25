@@ -1,6 +1,5 @@
 import { LetterStates, TileState } from "@/lib/types";
 import { create } from "zustand";
-import { initData } from '@telegram-apps/sdk';
 
 import { GameState } from "@/lib/types";
 import { updateLetterStates } from "@/lib/gameUtils";
@@ -45,7 +44,7 @@ const useGameSessionStore = create<GameSessionState>()(
 
       startGame: async () => {
         const { resetGame, setLoading } = get();
-        const userId = initData.user()?.id;
+        const userId = 1;
         if (!userId) {
           console.error("Ошибка: пользователь не авторизован.");
           return;

@@ -1,12 +1,116 @@
 from flask import Blueprint, request, jsonify
 from database import db
-from models import GameSession, Word, Leaderboard
+from models import GameSession, Word, Leaderboard, User
+from urllib.parse import parse_qs
 from utils import get_latest_season
+from os import getenv
+from dotenv import load_dotenv
+from datetime import datetime, timedelta
+import json
+import hashlib
+import hmac
 
+load_dotenv()
 
 game_bp = Blueprint('game', __name__, url_prefix='/api/game')
 
 ATTEMPTS_BY_LENGTH = {3: 7, 4: 6, 5: 6, 6: 5, 7: 5, 8: 4, 9: 4, 10: 3}
+
+
+def verify_telegram_webapp_data(init_data):
+    """
+    Проверяет подпись данных от Telegram WebApp
+    """
+    try:
+        parsed_data = parse_qs(init_data)
+        hash_str = parsed_data.pop('hash', [None])[0]
+        if not hash_str:
+            return False
+
+        auth_date = int(parsed_data.get('auth_date', ['0'])[0])
+        if (datetime.now() - datetime.fromtimestamp(auth_date)) > timedelta(hours=24):
+            return jsonify({'error': 'Data expired'}), 400
+
+        data_check_string = '\n'.join(
+            f"{key}={value[0]}" 
+            for key, value in sorted(parsed_data.items())
+        )
+
+        secret_key = hashlib.sha256(getenv('TOKEN').encode()).digest()
+        
+        computed_hash = hmac.new(
+            secret_key, 
+            data_check_string.encode(), 
+            hashlib.sha256
+        ).hexdigest()
+
+        return computed_hash == hash_str
+    except Exception as e:
+        print(f"Error verifying Telegram data: {e}")
+        return False
+
+@game_bp.route('/auth', methods=['POST'])
+def authenticate():
+    init_data = request.get_json().get('initData')
+    if not init_data:
+        return jsonify({'error': 'Missing initData'}), 400
+
+    if not verify_telegram_webapp_data(init_data):
+        return jsonify({'error': 'Invalid Telegram data signature'}), 403
+
+    try:
+        data = parse_qs(init_data)
+        user_data = json.loads(data["user"][0])
+        user_id = user_data['id']
+        username = user_data.get('username', '')
+        first_name = user_data.get('first_name', '')
+        photo_url = user_data.get('photo_url', '')
+
+        user = User.query.filter_by(user_id=user_id).first()
+        
+        if not user:
+            user = User(
+                user_id=user_id,
+                username=username or first_name,
+                photo_url=photo_url,
+                role='USER'
+            )
+            db.session.add(user)
+            db.session.commit()
+
+            latest_season = get_latest_season()
+            if latest_season:
+                leaderboard_entry = Leaderboard(
+                    user_id=user_id,
+                    season_id=latest_season.id,
+                    words_guessed=0
+                )
+                db.session.add(leaderboard_entry)
+                db.session.commit()
+
+        response = {
+            'user': {
+                'id': user.id,
+                'user_id': user.user_id,
+                'username': user.username,
+                'photo_url': user.photo_url,
+                'role': user.role
+            },
+            'auth_data': {
+                'auth_date': data.get('auth_date', [''])[0],
+                'query_id': data.get('query_id', [''])[0]
+            }
+        }
+
+        return jsonify(response), 200
+
+    except json.JSONDecodeError:
+        return jsonify({'error': 'Invalid user data format'}), 400
+    except KeyError as e:
+        return jsonify({'error': f'Missing required field: {str(e)}'}), 400
+    except Exception as e:
+        return jsonify({'error': f'Internal server error: {str(e)}'}), 500
+
 
 @game_bp.route('/daily', methods=['GET'])
 def get_daily_word():
@@ -44,7 +148,7 @@ def get_daily_word():
         'attempts_left': attempts
     })
 
-@game_bp.route('/api/game/start', methods=['GET'])
+@game_bp.route('/start', methods=['GET'])
 def start_game():
     user_id = request.args.get('user_id', type=int)
     if not user_id:

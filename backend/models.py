@@ -3,7 +3,9 @@ from datetime import datetime
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=False, nullable=False)
+    photo_url = db.Column(db.String, nullable=False)
     role = db.Column(db.String(20), nullable=False, default='USER')
 
 class Word(db.Model):
@@ -11,7 +13,7 @@ class Word(db.Model):
     word = db.Column(db.String(10), unique=True, nullable=False)
     length = db.Column(db.Integer, nullable=False)
     daily = db.Column(db.Boolean, default=False, nullable=False)
-    added_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    added_by = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.Date, nullable=True)
 
@@ -24,7 +26,7 @@ class Season(db.Model):
 
 class Leaderboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
     words_guessed = db.Column(db.Integer, default=0)
 
@@ -33,7 +35,7 @@ class Leaderboard(db.Model):
 
 class PrivilegedPlayer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), unique=True, nullable=False)
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
 
     user = db.relationship('User', backref=db.backref('privileged_status', lazy=True))
@@ -43,7 +45,7 @@ class GameSession(db.Model):
     __tablename__ = 'game_sessions'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     word_id = db.Column(db.Integer, db.ForeignKey('word.id'), nullable=False)
     attempts_left = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, default=False, nullable=False)
