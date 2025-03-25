@@ -1,9 +1,10 @@
 import { LetterStates, TileState } from "@/lib/types";
 import { create } from "zustand";
+
 import { GameState } from "@/lib/types";
 import { updateLetterStates } from "@/lib/gameUtils";
 import { persist } from "zustand/middleware";
-import { getNewWord } from "@/api/getNewWord";
+import { getNewSession } from "@/api/getNewSession";
 import { sendGuess } from "@/api/sendGuess";
 
 interface Tile {
@@ -19,6 +20,8 @@ interface GameSessionState {
   currentRow: number;
   currentGuess: string;
   letterStates: LetterStates;
+  isLoading: boolean;
+  setLoading: (loading: boolean) => void; 
   startGame: () => void;
   makeGuess: (guessWord: string) => void;
   onKeyPress: (key: string) => void;
@@ -35,26 +38,44 @@ const useGameSessionStore = create<GameSessionState>()(
       currentRow: 0,
       currentGuess: "",
       letterStates: {},
+      isLoading: false,
+      setLoading: (loading) => set({ isLoading: loading }),
+
 
       startGame: async () => {
-        const { resetGame } = get();
+        const { resetGame, setLoading } = get();
+        const userId = 1;
+        if (!userId) {
+          console.error("Ошибка: пользователь не авторизован.");
+          return;
+        }
+    
         resetGame();
-        const response = await getNewWord(1);
-        const { wordLength, attemptsLeft, gameId } = response;
-
-        set({
-          board: Array.from({ length: attemptsLeft }, () =>
-            Array.from({ length: wordLength }, () => ({
-              letter: "",
-              state: "empty",
-            })),
-          ),
-          gameId,
-          wordLength,
-          gameState: "playing",
-          currentRow: 0,
-          letterStates: {},
-        });
+    
+        try {
+          const response = await getNewSession(userId, console.log, setLoading);
+          if (!response) {
+            console.error("Ошибка: данные не получены.");
+            return;
+          }
+          const { wordLength, attemptsLeft, gameId } = response;
+    
+          set({
+            board: Array.from({ length: attemptsLeft }, () =>
+              Array.from({ length: wordLength }, () => ({
+                letter: "",
+                state: "empty",
+              })),
+            ),
+            gameId,
+            wordLength,
+            gameState: "playing",
+            currentRow: 0,
+            letterStates: {},
+          });
+        } catch (error) {
+          console.error("Ошибка при старте игры:", error);
+        }
       },
 
       makeGuess: async (guessWord: string) => {

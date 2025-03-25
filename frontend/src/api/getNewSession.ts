@@ -1,0 +1,47 @@
+// const currentWord = "спорт";
+
+import { sendRequest } from "./sendRequest";
+
+// export const getNewWord = async (userId: number) => {
+//   const attemptsLeft = 6; // Сбрасываем попытки
+
+//   return {
+//     userId: userId,
+//     gameId: Date.now(), // Уникальный идентификатор сессии
+//     wordLength: currentWord.length,
+//     attemptsLeft: attemptsLeft,
+//   };
+// };
+
+interface NewSessionData {
+  wordLength: number;
+  attemptsLeft: number;
+  gameId: number;
+}
+
+export const getNewSession = async (
+  userId: number,
+  onError: (error: string) => void,
+  setLoading: (loading: boolean) => void
+): Promise<NewSessionData | undefined> => {
+  try {
+    setLoading(true);
+    const response = await sendRequest<NewSessionData, void>(
+      `/api/game/start?user_id=${userId}`,
+      'get'
+    );
+
+    if (!response.succeeded || !response.data) {
+      onError(response.err || 'No data');
+      return undefined;
+    }
+
+    return response.data;
+  } catch (error: any) {
+    onError(error.message);
+    return undefined;
+  } finally {
+    setLoading(false);
+  }
+};
+

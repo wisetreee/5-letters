@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import EndlessModePage from "./pages/EndlessModePage";
 
 const App = () => (
+
   <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
     <main>
       <Routes>
