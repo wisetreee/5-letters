@@ -1,17 +1,5 @@
-// const currentWord = "спорт";
 
-import { sendRequest } from "./sendRequest";
-
-// export const getNewWord = async (userId: number) => {
-//   const attemptsLeft = 6; // Сбрасываем попытки
-
-//   return {
-//     userId: userId,
-//     gameId: Date.now(), // Уникальный идентификатор сессии
-//     wordLength: currentWord.length,
-//     attemptsLeft: attemptsLeft,
-//   };
-// };
+import { sendRequest } from "@/api/sendRequest";
 
 interface NewSessionData {
   wordLength: number;
@@ -20,7 +8,7 @@ interface NewSessionData {
 }
 
 export const getNewSession = async (
-  userId: number,
+  userId: string,
   onError: (error: string) => void,
   setLoading: (loading: boolean) => void
 ): Promise<NewSessionData | undefined> => {

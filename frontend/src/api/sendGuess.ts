@@ -1,23 +1,36 @@
-import { compareWords } from "@/lib/gameUtils";
-const currentWord = "спорт";
-let attemptsLeft = 6;
+import { TileState } from "@/lib/types";
+import { sendRequest } from "./sendRequest";
 
-export const sendGuess = async (gameId: number | null, guessWord: string) => {
-  if (!currentWord) {
-    throw new Error("Слово не установлено. Запросите новое слово.");
+interface GuessRequest {
+  game_id: number;
+  guess: string;
+}
+
+interface GuessResponse {
+  result: "win" | "incorrect" | "lose";
+  feedback: TileState[];
+  attempts_used?: number;
+  correct_word?: string;
+}
+
+export const sendGuess = async (
+  gameId: number,
+  guessWord: string
+): Promise<GuessResponse | null> => {
+  try {
+    const response = await sendRequest<GuessResponse, GuessRequest>(
+      "/game/guess",
+      "post",
+      { game_id: gameId, guess: guessWord }
+    );
+
+    if (!response.succeeded || !response.data) {
+      throw new Error("Не удалось получить ответ от сервера.");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Ошибка при отправке слова:", error);
+    return null;
   }
-
-  const feedback = compareWords(guessWord, currentWord); // Сравниваем слова
-  const isWin = feedback.every((state) => state === "correct"); // Проверяем победу
-
-  // Обновляем количество оставшихся попыток
-  attemptsLeft--;
-
-  return {
-    gameId: gameId,
-    result: isWin ? "win" : attemptsLeft === 0 ? "lose" : "incorrect",
-    feedback,
-    correctWord: attemptsLeft === 0 ? currentWord : null,
-    attemptsUsed: 6 - attemptsLeft,
-  };
 };

@@ -13,7 +13,7 @@ export async function sendRequest<Resp, Inp>(
   try {
     let fetchResponse: Response; 
     if (method === 'get') {
-      fetchResponse = await fetch(path, {
+      fetchResponse = await fetch(process.env.VITE_BACKEND_URL + path, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
