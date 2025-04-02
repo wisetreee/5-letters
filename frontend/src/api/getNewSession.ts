@@ -23,8 +23,14 @@ export const getNewSession = async (
       onError(response.err || 'No data');
       return undefined;
     }
+    const data:any = response.data;
+    const formattedData: NewSessionData = {
+      wordLength: data.word_length,
+      attemptsLeft: data.attempts_left,
+      gameId: data.game_id,
+    };
 
-    return response.data;
+    return formattedData;
   } catch (error: any) {
     onError(error.message);
     return undefined;

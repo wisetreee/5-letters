@@ -9,7 +9,7 @@ import { useAuth } from "./hooks/useAuth";
 const App = () => {
   const { appReady } = useInitapp();
   const { isAuth, loading, authError } = useAuth(appReady);
-  
+
   if(loading) {
     return <div>Загрузка...</div>
   }

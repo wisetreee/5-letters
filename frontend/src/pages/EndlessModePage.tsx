@@ -12,10 +12,10 @@ const EndlessModePage = () => {
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [loseModalOpen, setLoseModalOpen] = useState(false);
   const user = useUserStore((state) => state.user);
-
   useEffect(() => {
     if (gameState === "inactive" && user) {
-      startGame();
+      console.log("launch yopta");
+      startGame(user);
     }
     if (gameState === "win") {
       setTimeout(() => setWinModalOpen(true), 2000);
@@ -29,7 +29,7 @@ const EndlessModePage = () => {
     <div className="container flex flex-col items-center">
       <Board />
       <Keyboard />
-      {user&& <button onClick={() => startGame()}>Start Game</button>}
+      { user&& <button onClick={() => startGame(user)}>Start Game</button> }
       <WinModal
         rewardAmount={25}
         isOpen={winModalOpen}

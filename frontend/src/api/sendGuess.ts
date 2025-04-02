@@ -19,7 +19,7 @@ export const sendGuess = async (
 ): Promise<GuessResponse | null> => {
   try {
     const response = await sendRequest<GuessResponse, GuessRequest>(
-      "/game/guess",
+      "/api/game/guess",
       "post",
       { game_id: gameId, guess: guessWord }
     );

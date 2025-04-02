@@ -15,6 +15,13 @@ export default defineConfig({
     host: '0.0.0.0', // Разрешить доступ с любого IP
     port: 5173,      // Порт сервера разработки
     allowedHosts: true,
+    cors: true, 
+  },
+  preview: {
+    host: '0.0.0.0', 
+    port: 4173,   
+    allowedHosts: ["wordlik.loca.lt", "frontend"],
+
   },
 
 });

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { sendAuthRequest } from "@/api/sendAuthRequest";
-// import { useUserStore } from "@/store/userStore";
+import { useUserStore } from "@/store/userStore";
 
 export const useAuth = (appReady: boolean) => {  
     const [isAuth, setIsAuth] = useState(false);
     const [authError, setAuthError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     
-    // const setUser = useUserStore((state) => state.setUser);
-    // const setAuthData = useUserStore((state) => state.setAuthData);
+    const setUser = useUserStore((state) => state.setUser);
+    const setAuthData = useUserStore((state) => state.setAuthData);
 
     const getInitData = () => {
         //@ts-expect-error
@@ -35,10 +35,8 @@ export const useAuth = (appReady: boolean) => {
         if (!response || !response.user) {
           throw new Error("Ошибка авторизации: некорректный ответ сервера");
         }
-        console.log(response.user);
-        console.log(response.auth_data);
-        // setUser(response.user);
-        // setAuthData(response.auth_data);
+        setUser(response.user);
+        setAuthData(response.auth_data);
         setIsAuth(true);
       } catch (error: any) {
         setAuthError(error.message || "Неизвестная ошибка авторизации");

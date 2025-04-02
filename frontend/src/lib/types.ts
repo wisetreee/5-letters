@@ -4,7 +4,6 @@ export type LetterStates = Record<string, TileState>;
 export enum userRole { "USER" , "ADMIN"};
 
 export type userData = {
-    id: string,
     user_id: string,
     photo_url: string,
     username: string,

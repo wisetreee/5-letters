@@ -9,6 +9,7 @@ import useGameSessionStore from "@/store/gameSessionStore";
 import { RotateCcw, Undo2 } from "lucide-react";
 import EmojiIcon from "../ui/EmojiIcon";
 import { useNavigate } from "react-router";
+import { useUserStore } from "@/store/userStore";
 
 interface LoseModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface LoseModalProps {
 }
 
 const LoseModal = ({ isOpen, onClose }: LoseModalProps) => {
+  const user = useUserStore((state) => state.user);
   const startGame = useGameSessionStore((state) => state.startGame);
   const navigate = useNavigate();
 
@@ -40,7 +42,7 @@ const LoseModal = ({ isOpen, onClose }: LoseModalProps) => {
           <Button
             variant="default"
             onClick={() => {
-              startGame();
+              user && startGame(user);
               onClose();
             }}
           >

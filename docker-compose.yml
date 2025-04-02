@@ -1,6 +1,12 @@
 version: '3.8'
 
 services:
+
+  lt:
+    restart: always
+    build:
+      context: ./lt
+      dockerfile: Dockerfile
   backend:
     build:
       context: ./backend
@@ -10,7 +16,8 @@ services:
       - "5000:5000"
     depends_on:
       - db
-
+      - lt
+    hostname: backend
   db:
     image: postgres:13
     restart: always
@@ -25,7 +32,6 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: next_frontend
     restart: always
     env_file:
       - .env
@@ -33,6 +39,7 @@ services:
       - backend
     ports:
       - "4173:4173"
+    hostname: frontend
 
 volumes:
   postgres_data:
