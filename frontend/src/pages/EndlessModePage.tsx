@@ -4,7 +4,7 @@ import LoseModal from "@/components/modals/LoseModal";
 import WinModal from "@/components/modals/WinModal";
 import useGameSessionStore from "@/store/gameSessionStore";
 import { useUserStore } from "@/store/userStore";
-import { useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
 const EndlessModePage = () => {
   const startGame = useGameSessionStore((state) => state.startGame);
@@ -12,24 +12,30 @@ const EndlessModePage = () => {
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [loseModalOpen, setLoseModalOpen] = useState(false);
   const user = useUserStore((state) => state.user);
+  const hasStarted = useRef(false); 
+
   useEffect(() => {
-    if (gameState === "inactive" && user) {
-      console.log("launch yopta");
+    if (gameState === "inactive" && user && !hasStarted.current) {
+      hasStarted.current = true; 
       startGame(user);
     }
+  }, [gameState, user]); 
+
+  useEffect(() => {
     if (gameState === "win") {
       setTimeout(() => setWinModalOpen(true), 2000);
-    }
-    if (gameState === "lost") {
+    } else if (gameState === "lost") {
       setTimeout(() => setLoseModalOpen(true), 2000);
     }
-  }, [gameState, startGame]);
+  }, [gameState]);
+
+
 
   return (
     <div className="container flex flex-col items-center">
       <Board />
       <Keyboard />
-      { user&& <button onClick={() => startGame(user)}>Start Game</button> }
+      { user && <button onClick={() => startGame(user)}>Start Game</button> }
       <WinModal
         rewardAmount={25}
         isOpen={winModalOpen}

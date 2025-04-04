@@ -42,7 +42,6 @@ const useGameSessionStore = create<GameSessionState>()(
       isLoading: false,
       setLoading: (loading) => set({ isLoading: loading }),
 
-
       startGame: async (user: userData) => {
         const userId = user?.user_id;
         const { resetGame, setLoading } = get();
@@ -50,14 +49,10 @@ const useGameSessionStore = create<GameSessionState>()(
           console.error("Ошибка: пользователь не авторизован.");
           return;
         }
-        resetGame();
-       
-
+        resetGame();    
         try {
           setTimeout(async () => {
-
           const response = await getNewSession(userId, console.error, setLoading);
-
           if (!response) {
            throw new Error("Данные не получены.");
           }

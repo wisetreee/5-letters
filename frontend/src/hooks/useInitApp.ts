@@ -13,7 +13,7 @@ const initTelegramApp = async() => {
     }
 };
 
-export const useInitapp = () : {appReady: boolean} => {
+export const useInitApp = () : {appReady: boolean} => {
     const [isAppReady, setIsAppReady] = useState(false);
     useEffect(() => {
         initTelegramApp().then(() => {
@@ -21,4 +21,4 @@ export const useInitapp = () : {appReady: boolean} => {
         });
     }, []);
     return {appReady: isAppReady};
-}
+};

@@ -48,7 +48,7 @@ export default function Tile({
       className={cn(
         "size-12 sm:size-20 border-2 flex items-center justify-center rounded-md",
         "text-2xl sm:text-4xl font-semibold uppercase transition-all transform",
-        "will-change-transform border-accent-1", // Оптимизация анимации
+        "will-change-transform border-accent-1",
         {
           "bg-accent-1 text-white border-accent-1": tileState === "correct",
           "bg-accent-2 text-white border-accent-2": tileState === "present",
