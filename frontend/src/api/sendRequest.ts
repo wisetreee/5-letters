@@ -1,3 +1,4 @@
+import { getErrorMessage } from "@/lib/utils/getErrorMessage";
 
 export interface ApiResponse<T> {
   err?: string;
@@ -5,7 +6,7 @@ export interface ApiResponse<T> {
   data?: T;
 }
 
-export async function sendRequest<Resp, Inp>(
+export async function sendRequest<Inp, Resp>(
   path: string,
   method: 'get' | 'post' = 'post',
   params?: Inp
@@ -13,14 +14,14 @@ export async function sendRequest<Resp, Inp>(
   try {
     let fetchResponse: Response; 
     if (method === 'get') {
-      fetchResponse = await fetch(import.meta.env.VITE_BACKEND_URL + path, {
+      fetchResponse = await fetch(import.meta.env.VITE_API_URL + path, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
     } else {
-      fetchResponse = await fetch(import.meta.env.VITE_BACKEND_URL + path, {
+      fetchResponse = await fetch(import.meta.env.VITE_API_URL + path, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,9 +42,10 @@ export async function sendRequest<Resp, Inp>(
       succeeded: true,
       data,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error, "Неизвестная ошибка при отправке запроса");
     return {
-      err: error.message,
+      err: errorMessage,
       succeeded: false,
     };
   }

@@ -4,7 +4,7 @@ import LoseModal from "@/components/modals/LoseModal";
 import WinModal from "@/components/modals/WinModal";
 import useGameSessionStore from "@/store/gameSessionStore";
 import { useUserStore } from "@/store/userStore";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const EndlessModePage = () => {
   const startGame = useGameSessionStore((state) => state.startGame);
@@ -17,9 +17,9 @@ const EndlessModePage = () => {
   useEffect(() => {
     if (gameState === "inactive" && user && !hasStarted.current) {
       hasStarted.current = true; 
-      startGame(user);
+      startGame();
     }
-  }, [gameState, user]); 
+  }, [gameState, user, startGame]); 
 
   useEffect(() => {
     if (gameState === "win") {
@@ -35,7 +35,7 @@ const EndlessModePage = () => {
     <div className="container flex flex-col items-center">
       <Board />
       <Keyboard />
-      { user && <button onClick={() => startGame(user)}>Start Game</button> }
+       <button onClick={() => startGame()}>Start Game</button>
       <WinModal
         rewardAmount={25}
         isOpen={winModalOpen}

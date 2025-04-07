@@ -15,7 +15,7 @@ const App = () => {
       {loading ? 
       <div>Загрузка...</div> : 
       !isAuth ? 
-      <div>Ошибка авторизации: {authError}</div> :
+      <div>Ошибка авторизации: {authError} </div> :
       <main>
         <Routes>
           <Route index element={<HomePage />} />

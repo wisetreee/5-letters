@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 
 const initTelegramApp = async() => {
-    //@ts-expect-error
+    //@ts-expect-error turned off because ts can't find window.Telegram 
     const Telegram = window.Telegram;
     if (Telegram && Telegram.WebApp) {
         Telegram.WebApp.ready();

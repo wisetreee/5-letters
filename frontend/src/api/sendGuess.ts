@@ -1,5 +1,6 @@
 import { TileState } from "@/lib/types";
 import { sendRequest } from "./sendRequest";
+import { getErrorMessage } from "@/lib/utils/getErrorMessage";
 
 interface GuessRequest {
   game_id: number;
@@ -18,7 +19,7 @@ export const sendGuess = async (
   guessWord: string
 ): Promise<GuessResponse | null> => {
   try {
-    const response = await sendRequest<GuessResponse, GuessRequest>(
+    const response = await sendRequest<GuessRequest, GuessResponse>(
       "/api/game/guess",
       "post",
       { game_id: gameId, guess: guessWord }
@@ -30,7 +31,8 @@ export const sendGuess = async (
 
     return response.data;
   } catch (error) {
-    console.error("Ошибка при отправке слова:", error);
+      const errorMessage = getErrorMessage(error, "Неизвестная ошибка при отправке слова");
+      console.error("Ошибка при отправке слова:", errorMessage);
     return null;
   }
 };

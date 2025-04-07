@@ -1,4 +1,4 @@
-import { LetterStates, TileState, userData } from "@/lib/types";
+import { LetterStates, TileState } from "@/lib/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -6,6 +6,7 @@ import { GameState } from "@/lib/types";
 import { updateLetterStates } from "@/lib/gameUtils";
 import { getNewSession } from "@/api/getNewSession";
 import { sendGuess } from "@/api/sendGuess";
+import { useUserStore } from "./userStore";
 
 
 interface Tile {
@@ -23,7 +24,7 @@ interface GameSessionState {
   letterStates: LetterStates;
   isLoading: boolean;
   setLoading: (loading: boolean) => void; 
-  startGame: (user: userData) => void;
+  startGame: () => void;
   makeGuess: (guessWord: string) => void;
   onKeyPress: (key: string) => void;
   resetGame: () => void;
@@ -42,8 +43,8 @@ const useGameSessionStore = create<GameSessionState>()(
       isLoading: false,
       setLoading: (loading) => set({ isLoading: loading }),
 
-      startGame: async (user: userData) => {
-        const userId = user?.user_id;
+      startGame: async () => {
+        const userId = useUserStore.getState().user?.user_id;
         const { resetGame, setLoading } = get();
         if (!userId) {
           console.error("Ошибка: пользователь не авторизован.");
@@ -51,7 +52,6 @@ const useGameSessionStore = create<GameSessionState>()(
         }
         resetGame();    
         try {
-          setTimeout(async () => {
           const response = await getNewSession(userId, console.error, setLoading);
           if (!response) {
            throw new Error("Данные не получены.");
@@ -74,7 +74,7 @@ const useGameSessionStore = create<GameSessionState>()(
           });
           console.log("Новое состояние:", get()); 
           console.log("установил доску")
-        }, 100);
+
         } catch (error) {
           console.error("Ошибка при старте игры:", error);
         }
