@@ -21,7 +21,7 @@ def populate_database(file_path, app):
     with app.app_context():
         admin = User.query.filter_by(role="ADMIN").first()
         if not admin:
-            admin = User(username="admin", role="ADMIN")
+            admin = User(username="admin", role="ADMIN", user_id = 1, photo_url="")
             db.session.add(admin)
             db.session.commit()
             logging.info(f"Created 'admin' user with ID {admin.id}.")

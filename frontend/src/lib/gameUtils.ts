@@ -11,7 +11,7 @@ export const compareWords = (
   // Создаём массив-флаг для отслеживания использованных букв в targetWord
   const usedLetters = Array(targetWordArray.length).fill(false);
 
-  // 1️⃣ Сначала отмечаем буквы, которые стоят на своём месте
+  //  Сначала отмечаем буквы, которые стоят на своём месте
   for (let i = 0; i < guessWordArray.length; i++) {
     if (guessWordArray[i] === targetWordArray[i]) {
       states[i] = "correct";
@@ -19,7 +19,7 @@ export const compareWords = (
     }
   }
 
-  // 2️⃣ Затем проверяем буквы, которые есть в слове, но не на месте
+  //  Затем проверяем буквы, которые есть в слове, но не на месте
   for (let i = 0; i < guessWordArray.length; i++) {
     if (states[i] === "correct") continue; // Пропускаем уже отмеченные буквы
 

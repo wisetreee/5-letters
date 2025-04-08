@@ -5,10 +5,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import useGameSessionStore from "@/store/gameSessionStore";
 import { RotateCcw, Undo2 } from "lucide-react";
 import EmojiIcon from "../ui/EmojiIcon";
 import { useNavigate } from "react-router";
+import useGameSessionStore from "@/store/gameSessionStore";
 
 interface WinModalProps {
   isOpen: boolean;
@@ -17,6 +17,7 @@ interface WinModalProps {
 }
 
 const WinModal = ({ isOpen, rewardAmount, onClose }: WinModalProps) => {
+
   const startGame = useGameSessionStore((state) => state.startGame);
   const navigate = useNavigate();
   return (

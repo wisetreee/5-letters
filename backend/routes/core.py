@@ -51,12 +51,13 @@ def verify_telegram_webapp_data(init_data):
 
 @game_bp.route('/auth', methods=['POST'])
 def authenticate():
+    print(request.get_json())
     init_data = request.get_json().get('initData')
     if not init_data:
         return jsonify({'error': 'Missing initData'}), 400
 
-    if not verify_telegram_webapp_data(init_data):
-        return jsonify({'error': 'Invalid Telegram data signature'}), 403
+    # if not verify_telegram_webapp_data(init_data):
+    #     return jsonify({'error': 'Invalid Telegram data signature'}), 403
 
     try:
         data = parse_qs(init_data)

@@ -1,11 +1,13 @@
 import { LetterStates, TileState } from "@/lib/types";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 import { GameState } from "@/lib/types";
 import { updateLetterStates } from "@/lib/gameUtils";
-import { persist } from "zustand/middleware";
 import { getNewSession } from "@/api/getNewSession";
 import { sendGuess } from "@/api/sendGuess";
+import { useUserStore } from "./userStore";
+
 
 interface Tile {
   letter: string;
@@ -41,25 +43,22 @@ const useGameSessionStore = create<GameSessionState>()(
       isLoading: false,
       setLoading: (loading) => set({ isLoading: loading }),
 
-
       startGame: async () => {
+        const userId = useUserStore.getState().user?.user_id;
         const { resetGame, setLoading } = get();
-        const userId = 1;
         if (!userId) {
           console.error("Ошибка: пользователь не авторизован.");
           return;
         }
-    
-        resetGame();
-    
+        resetGame();    
         try {
-          const response = await getNewSession(userId, console.log, setLoading);
+          const response = await getNewSession(userId, console.error, setLoading);
           if (!response) {
-            console.error("Ошибка: данные не получены.");
-            return;
+           throw new Error("Данные не получены.");
           }
           const { wordLength, attemptsLeft, gameId } = response;
-    
+          console.log(response)
+          console.log({ wordLength, attemptsLeft, gameId })
           set({
             board: Array.from({ length: attemptsLeft }, () =>
               Array.from({ length: wordLength }, () => ({
@@ -73,33 +72,46 @@ const useGameSessionStore = create<GameSessionState>()(
             currentRow: 0,
             letterStates: {},
           });
+          console.log("Новое состояние:", get()); 
+          console.log("установил доску")
+
         } catch (error) {
           console.error("Ошибка при старте игры:", error);
         }
       },
 
       makeGuess: async (guessWord: string) => {
-        const { gameId, letterStates, board, currentRow } = get();
-        if (!gameId || currentRow >= board.length) return;
-
-        const response = await sendGuess(gameId, guessWord);
-        const { feedback, result } = response;
-
-        const updatedBoard = [...board];
-        updatedBoard[currentRow] = guessWord.split("").map((letter, i) => ({
-          letter,
-          state: feedback[i],
-        }));
-
-        set({
-          board: updatedBoard,
-          currentRow: currentRow + 1,
-          letterStates: updateLetterStates(guessWord, feedback, letterStates),
-          gameState:
-            result == "win" ? "win" : result == "lose" ? "lost" : "playing",
-        });
+        try {
+          const { gameId, letterStates, board, currentRow } = get();
+          
+          if (!gameId || currentRow >= board.length) return;
+      
+          const response = await sendGuess(gameId, guessWord);
+      
+          if (!response || !response.feedback || response.feedback.length !== guessWord.length) {
+            console.error("Некорректный ответ от сервера:", response);
+            return;
+          }
+      
+          const { feedback, result } = response;
+          const updatedBoard = [...board];
+      
+          updatedBoard[currentRow] = guessWord.split("").map((letter, i) => ({
+            letter,
+            state: feedback[i] || "absent", // Если feedback[i] нет, подставляем "absent"
+          }));
+      
+          set((state) => ({
+            board: updatedBoard,
+            currentRow: state.currentRow + 1,
+            letterStates: updateLetterStates(guessWord, feedback, letterStates),
+            gameState: result === "win" ? "win" : result === "lose" ? "lost" : "playing",
+          }));
+      
+        } catch (error) {
+          console.error("Ошибка при угадывании слова:", error);
+        }
       },
-
       onKeyPress: (key: string) => {
         const {
           wordLength,

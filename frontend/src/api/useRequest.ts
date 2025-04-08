@@ -9,10 +9,10 @@ export function useRequest<Inp, Res>(
 ) {
   const request = useCallback(async (input?: Inp): Promise<ApiResponse<Res>> => {
     setLoading?.(true);
-    const result = await sendRequest<Res, Inp>(path, method, input);
+    const result = await sendRequest<Inp, Res>(path, method, input);
     setLoading?.(false);
     if (!result.succeeded) onError(result.err ?? 'Internal Server Error');
     return result;
-  }, []);
+  }, [path, method, onError, setLoading]); 
   return request;
 }
