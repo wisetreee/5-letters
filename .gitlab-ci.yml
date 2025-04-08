@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  DOCKER_IMAGE: "your-dockerhub-username/your-app-name"
+  DOCKER_IMAGE: "inferking/5-letters"
   DOCKER_TAG: "latest"
 
 cache:
