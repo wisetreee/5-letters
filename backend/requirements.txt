@@ -1,0 +1,10 @@
+flask
+python-dotenv
+flask-sqlalchemy
+psycopg2-binary
+sqlalchemy
+aiogram
+flask-migrate
+flask-cors
+apscheduler
+gunicorn

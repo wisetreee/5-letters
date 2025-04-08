@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  lt:
+    restart: always
+    build:
+      context: ./lt
+      dockerfile: Dockerfile
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    hostname: backend
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  frontend:
+    build: ./frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "4173:4173"
+    hostname: frontend
+
+volumes:
+  postgres_data:

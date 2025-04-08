@@ -1,0 +1,47 @@
+stages:
+  - setup
+  - lint
+
+frontend_install_dependencies:
+  stage: setup
+  image: node:22.13
+  cache:
+    key: frontend-dependencies
+    paths:
+      - frontend/node_modules/
+  script:
+    - cd frontend
+    - npm install
+  artifacts:
+    paths:
+      - frontend/node_modules/
+
+frontend_lint:
+  stage: lint
+  image: node:22.13
+  cache:
+    key: frontend-dependencies
+    paths:
+      - frontend/node_modules/
+  script:
+    - cd frontend
+    - npm run lint
+
+backend_lint:
+  stage: lint
+  image: python:3.11
+  cache:
+    key: backend-dependencies
+    paths:
+      - backend/.venv/
+  before_script:
+    - pip install --user virtualenv
+    - python -m venv backend/.venv
+    - source backend/.venv/bin/activate
+    - which python
+    - pip install --upgrade pip
+    - pip install black
+  script:
+    - cd backend
+    - black .   
+    - cd ..  
