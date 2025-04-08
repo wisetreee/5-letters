@@ -23,6 +23,21 @@ frontend_install_dependencies:
     paths:
       - frontend/node_modules/
 
+backend_install_dependencies:
+  stage: setup
+  image: python:3.11
+  before_script:
+    - python -m venv backend/.venv
+    - source backend/.venv/bin/activate
+    - pip install --upgrade pip
+  script:
+    - cd backend
+    - pip install -r requirements.txt
+  artifacts:
+    paths:
+      - backend/.venv/
+    expire_in: 1 hour
+
 frontend_lint:
   stage: lint
   image: node:22.13
@@ -35,8 +50,6 @@ backend_lint:
   stage: lint
   image: python:3.11
   before_script:
-    - pip install --user virtualenv
-    - python -m venv backend/.venv
     - source backend/.venv/bin/activate
     - pip install --upgrade pip
     - pip install black
