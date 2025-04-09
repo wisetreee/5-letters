@@ -16,13 +16,13 @@ interface GuessResponse {
 
 export const sendGuess = async (
   gameId: number,
-  guessWord: string
+  guessWord: string,
 ): Promise<GuessResponse | null> => {
   try {
     const response = await sendRequest<GuessRequest, GuessResponse>(
       "/api/game/guess",
       "post",
-      { game_id: gameId, guess: guessWord }
+      { game_id: gameId, guess: guessWord },
     );
 
     if (!response.succeeded || !response.data) {
@@ -31,8 +31,11 @@ export const sendGuess = async (
 
     return response.data;
   } catch (error) {
-      const errorMessage = getErrorMessage(error, "Неизвестная ошибка при отправке слова");
-      console.error("Ошибка при отправке слова:", errorMessage);
+    const errorMessage = getErrorMessage(
+      error,
+      "Неизвестная ошибка при отправке слова",
+    );
+    console.error("Ошибка при отправке слова:", errorMessage);
     return null;
   }
 };

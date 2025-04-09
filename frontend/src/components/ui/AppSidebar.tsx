@@ -7,12 +7,11 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { userData } from "@/lib/types";
-
 
 interface MenuItem {
   title: string;
@@ -26,7 +25,6 @@ interface AppSidebarProps {
 }
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({ menuItems, user }) => {
-  
   return (
     <Sidebar side="right" collapsible="offcanvas">
       <SidebarContent>
@@ -36,13 +34,12 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ menuItems, user }) => {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild size={"lg"}>
-                      <button onClick={() => item.onClick()}>
+                  <SidebarMenuButton asChild size={"lg"}>
+                    <button onClick={() => item.onClick()}>
                       {item.icon}
                       <span>{item.title}</span>
-                      </button>
-                    </SidebarMenuButton>
-                  
+                    </button>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -50,20 +47,19 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ menuItems, user }) => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-         <SidebarMenu>
-           <SidebarMenuItem>
-             <SidebarMenuButton asChild size={"lg"}>
-                
-                <button>
-                  <Avatar>
-                     <AvatarImage src={user?.photo_url} />
-                     <AvatarFallback>Профиль</AvatarFallback>
-                  </Avatar>
-                  <span>{user?.username}</span>
-                </button>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild size={"lg"}>
+              <button>
+                <Avatar>
+                  <AvatarImage src={user?.photo_url} />
+                  <AvatarFallback>Профиль</AvatarFallback>
+                </Avatar>
+                <span>{user?.username}</span>
+              </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
-         </SidebarMenu>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
