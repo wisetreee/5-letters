@@ -12,14 +12,14 @@ const EndlessModePage = () => {
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [loseModalOpen, setLoseModalOpen] = useState(false);
   const user = useUserStore((state) => state.user);
-  const hasStarted = useRef(false); 
+  const hasStarted = useRef(false);
 
   useEffect(() => {
     if (gameState === "inactive" && user && !hasStarted.current) {
-      hasStarted.current = true; 
+      hasStarted.current = true;
       startGame();
     }
-  }, [gameState, user, startGame]); 
+  }, [gameState, user, startGame]);
 
   useEffect(() => {
     if (gameState === "win") {
@@ -29,13 +29,11 @@ const EndlessModePage = () => {
     }
   }, [gameState]);
 
-
-
   return (
     <div className="container flex flex-col items-center">
       <Board />
       <Keyboard />
-       <button onClick={() => startGame()}>Start Game</button>
+      <button onClick={() => startGame()}>Start Game</button>
       <WinModal
         rewardAmount={25}
         isOpen={winModalOpen}

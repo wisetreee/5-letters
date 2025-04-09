@@ -1,4 +1,3 @@
-
 import { sendRequest } from "@/api/sendRequest";
 import { getErrorMessage } from "@/lib/utils/getErrorMessage";
 
@@ -17,33 +16,35 @@ interface NewSessionData {
 export const getNewSession = async (
   userId: string,
   onError: (error: string) => void,
-  setLoading: (loading: boolean) => void
+  setLoading: (loading: boolean) => void,
 ): Promise<NewSessionData | null> => {
   try {
     setLoading(true);
     const response = await sendRequest<void, NewSessionDataResponse>(
       `/api/game/start?user_id=${userId}`,
-      'get'
+      "get",
     );
 
     if (!response.succeeded || !response.data) {
-      onError(response.err || 'No data');
+      onError(response.err || "No data");
       return null;
     }
-     const data = response.data;
-     const formattedData: NewSessionData = {
-       wordLength: data.word_length,
-       attemptsLeft: data.attempts_left,
-       gameId: data.game_id,
-     };
+    const data = response.data;
+    const formattedData: NewSessionData = {
+      wordLength: data.word_length,
+      attemptsLeft: data.attempts_left,
+      gameId: data.game_id,
+    };
 
-     return formattedData;
+    return formattedData;
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, "Неизвестная ошибка при создании новой сессии");
+    const errorMessage = getErrorMessage(
+      error,
+      "Неизвестная ошибка при создании новой сессии",
+    );
     onError(errorMessage);
     return null;
   } finally {
     setLoading(false);
   }
 };
-

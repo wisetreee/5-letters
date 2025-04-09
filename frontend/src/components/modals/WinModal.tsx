@@ -17,7 +17,6 @@ interface WinModalProps {
 }
 
 const WinModal = ({ isOpen, rewardAmount, onClose }: WinModalProps) => {
-
   const startGame = useGameSessionStore((state) => state.startGame);
   const navigate = useNavigate();
   return (
