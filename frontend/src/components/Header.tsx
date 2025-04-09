@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  CircleHelp,
-  Settings,
-  Undo2
-} from "lucide-react";
+import { CircleHelp, Settings, Undo2 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import { useState } from "react";
 import HowToPlayModal from "./modals/HowToPlayModal";
@@ -14,7 +10,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useUserStore } from "@/store/userStore";
 
 const Header = () => {
-
   const menuItems = [
     {
       title: "Помощь",
@@ -43,30 +38,27 @@ const Header = () => {
         <Logo />
       </div>
       <div className="flex flex-1/3 justify-end">
-      <div className="hidden sm:flex sm:gap-2 items-center">
-            {menuItems.map((item) => (
-              <Button
-                key={item.title}
-                size="icon"
-                variant="ghost"
-                onClick={() => item.onClick()}
-              >
-                {item.icon}
-              </Button>
-            ))}
+        <div className="hidden sm:flex sm:gap-2 items-center">
+          {menuItems.map((item) => (
             <Button
+              key={item.title}
               size="icon"
               variant="ghost"
+              onClick={() => item.onClick()}
             >
-              <Avatar>
-                <AvatarImage src={user?.photo_url} />
-                <AvatarFallback>Профиль</AvatarFallback>
-              </Avatar>
+              {item.icon}
             </Button>
-          </div>
-        <SidebarTriggerButton/>
+          ))}
+          <Button size="icon" variant="ghost">
+            <Avatar>
+              <AvatarImage src={user?.photo_url} />
+              <AvatarFallback>Профиль</AvatarFallback>
+            </Avatar>
+          </Button>
+        </div>
+        <SidebarTriggerButton />
       </div>
-      {IsMobile && <AppSidebar menuItems={menuItems} user={user} />}    
+      {IsMobile && <AppSidebar menuItems={menuItems} user={user} />}
       <HowToPlayModal
         isOpen={HowToPlayModalOpen}
         onClose={() => setHowToPlayModalOpen(false)}
