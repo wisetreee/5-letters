@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { sendAuthRequest } from "@/api/sendAuthRequest";
 import { useUserStore } from "@/store/userStore";
 import { getErrorMessage } from "@/lib/utils/getErrorMessage";
@@ -7,6 +7,9 @@ export const useAuth = (appReady: boolean) => {
   const [isAuth, setIsAuth] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const retryCount = useRef(0);
+  const maxRetries = 3;
+  const retryDelay = 3000;
 
   const { setUser, setAuthData } = useUserStore(); // Деструктурируем для стабильности ссылок
 
@@ -47,22 +50,29 @@ export const useAuth = (appReady: boolean) => {
       setAuthData(response.auth_data);
       setIsAuth(true);
       setAuthError(null);
+      retryCount.current = 0; 
     } catch (error: unknown) {
       const errorMessage = getErrorMessage(
         error,
         "Неизвестная ошибка аутентификации",
       );
       setAuthError(errorMessage);
+      retryCount.current += 1;
+      if (retryCount.current < maxRetries) {
+        setTimeout(() => {
+          if (!isAuth) auth();
+        }, retryDelay);
+      }
     } finally {
       setLoading(false);
     }
-  }, [appReady, getInitData, loading, setAuthData, setUser]);
+  }, [appReady, getInitData, isAuth, loading, setAuthData, setUser]);
 
   useEffect(() => {
-    if (appReady && !isAuth && !loading) {
+    if (appReady && !isAuth && retryCount.current === 0) {
       auth();
     }
-  }, [appReady, isAuth, loading, auth]);
+  }, [appReady, isAuth, auth]);
 
   return { isAuth, authError, loading };
 };

@@ -1,14 +1,21 @@
 stages:
   - setup
   - lint
+  - deploy
+
+variables:
+  DOCKER_IMAGE: "inferking/5-letters"
+  DOCKER_TAG: "latest"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - frontend/node_modules/
+    - backend/.venv/
 
 frontend_install_dependencies:
   stage: setup
   image: node:22.13
-  cache:
-    key: frontend-dependencies
-    paths:
-      - frontend/node_modules/
   script:
     - cd frontend
     - npm install
@@ -16,13 +23,25 @@ frontend_install_dependencies:
     paths:
       - frontend/node_modules/
 
+backend_install_dependencies:
+  stage: setup
+  image: python:3.11
+  before_script:
+    - python -m venv backend/.venv
+    - source backend/.venv/bin/activate
+    - pip install --upgrade pip
+  script:
+    - cd backend
+    - pip install -r requirements.txt
+  artifacts:
+    paths:
+      - backend/.venv/
+    expire_in: 1 hour
+
 frontend_lint:
   stage: lint
   image: node:22.13
-  cache:
-    key: frontend-dependencies
-    paths:
-      - frontend/node_modules/
+  needs: ["frontend_install_dependencies"]
   script:
     - cd frontend
     - npm run lint
@@ -30,18 +49,49 @@ frontend_lint:
 backend_lint:
   stage: lint
   image: python:3.11
-  cache:
-    key: backend-dependencies
-    paths:
-      - backend/.venv/
   before_script:
-    - pip install --user virtualenv
-    - python -m venv backend/.venv
     - source backend/.venv/bin/activate
-    - which python
     - pip install --upgrade pip
     - pip install black
   script:
     - cd backend
-    - black .   
-    - cd ..  
+    - black .
+    - cd ..
+
+docker_build_and_push:
+  stage: deploy
+  image: docker:24.0
+  services:
+    - docker:24.0-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+  only:
+    - main
+  before_script:
+    - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+  script:
+    - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
+    - docker push $DOCKER_IMAGE:$DOCKER_TAG
+  after_script:
+    - docker logout
+
+deploy_to_vm:
+  stage: deploy
+  image: alpine/ssh
+  before_script:
+    - apk add --no-cache docker-cli
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - mkdir -p ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  script:
+    - ssh -o StrictHostKeyChecking=no user@vm-ip "
+        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
+        docker pull $DOCKER_IMAGE:$DOCKER_TAG &&
+        docker stop my-app || true &&
+        docker rm my-app || true &&
+        docker run -d --name my-app -p 4173:4173 $DOCKER_IMAGE:$DOCKER_TAG
+      "
+  only:
+    - main
