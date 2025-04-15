@@ -7,7 +7,16 @@ from flask_cors import CORS
 from populate_words import populate_database
 app = Flask(__name__)
 init_db(app)
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, 
+    resources={r"/api/*": {
+        "origins": ["https://wordlik.loca.lt", "http://localhost:*"],
+            "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "expose_headers": ["X-Total-Count"],
+            "supports_credentials": True,
+            "max_age": 1728000
+    }}
+)
 
 migrate = Migrate(app, db)
 
