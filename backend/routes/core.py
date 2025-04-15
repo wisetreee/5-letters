@@ -2,10 +2,11 @@ from flask import Blueprint, request, jsonify
 from database import db
 from models import GameSession, Word, Leaderboard, User
 from urllib.parse import parse_qs
-from utils import get_latest_season
+from utils import get_latest_season, calculate_rank_for_all
 from os import getenv
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+from game_model import GameModel, GameType
 import json
 import hashlib
 import hmac
@@ -13,8 +14,6 @@ import hmac
 load_dotenv()
 
 game_bp = Blueprint('game', __name__, url_prefix='/api/game')
-
-ATTEMPTS_BY_LENGTH = {3: 7, 4: 6, 5: 6, 6: 5, 7: 5, 8: 4, 9: 4, 10: 3}
 
 
 def verify_telegram_webapp_data(init_data):
@@ -51,7 +50,6 @@ def verify_telegram_webapp_data(init_data):
 
 @game_bp.route('/auth', methods=['POST'])
 def authenticate():
-    print(request.get_json())
     init_data = request.get_json().get('initData')
     if not init_data:
         return jsonify({'error': 'Missing initData'}), 400
@@ -70,11 +68,14 @@ def authenticate():
         user = User.query.filter_by(user_id=user_id).first()
         
         if not user:
+            user_count = db.session.query(db.func.count(User.id)).scalar()
+
             user = User(
                 user_id=user_id,
                 username=username or first_name,
                 photo_url=photo_url,
-                role='USER'
+                role='USER',
+                rank=user_count + 1
             )
             db.session.add(user)
             db.session.commit()
@@ -138,9 +139,10 @@ def get_daily_word():
         db.session.delete(session)
     db.session.commit()
 
-    attempts = ATTEMPTS_BY_LENGTH.get(daily_word.length, 3)
+    game_model = GameModel()
+    attempts = game_model.ATTEMPTS_BY_LENGTH.get(daily_word.length, 3)
 
-    session = GameSession(user_id=user_id, word_id=daily_word.id, attempts_left=attempts, reward=50, completed=False)
+    session = GameSession(user_id=user_id, word_id=daily_word.id, attempts_left=attempts, reward=game_model.get_reward_by_mode(GameType.DAILY), completed=False)
     db.session.add(session)
     db.session.commit()
 
@@ -167,9 +169,10 @@ def start_game():
     if not word:
         return jsonify({'error': 'No words available'}), 500
 
-    attempts = ATTEMPTS_BY_LENGTH.get(word.length, 3)
+    game_model = GameModel()
+    attempts = game_model.ATTEMPTS_BY_LENGTH.get(word.length, 3)
 
-    session = GameSession(user_id=user_id, word_id=word.id, attempts_left=attempts, completed=False, reward=25)
+    session = GameSession(user_id=user_id, word_id=word.id, attempts_left=attempts, completed=False, reward=game_model.get_reward_by_mode(GameType.DAILY))
     db.session.add(session)
     db.session.commit()
 
@@ -235,10 +238,16 @@ def guess_word():
             db.session.add(leaderboard_entry)
 
         db.session.commit()
+
+        calculate_rank_for_all()
+        db.session.commit()
+        
+        game_model = GameModel()
+
         return jsonify({
             'result': 'win',
             'feedback': result,
-            'attempts_used': ATTEMPTS_BY_LENGTH.get(len(word.word), 3) - session.attempts_left,
+            'attempts_used': game_model.ATTEMPTS_BY_LENGTH.get(len(word.word), 3) - session.attempts_left,
             'reward': session.reward
         })
 

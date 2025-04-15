@@ -8,7 +8,7 @@ class User(db.Model):
     photo_url = db.Column(db.String, nullable=False)
     role = db.Column(db.String(20), nullable=False, default='USER')
     star_balance = db.Column(db.Integer, nullable=False, default=0)
- 
+    rank = db.Column(db.Integer, nullable=False)
 
 class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
