@@ -7,6 +7,8 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=False, nullable=False)
     photo_url = db.Column(db.String, nullable=False)
     role = db.Column(db.String(20), nullable=False, default='USER')
+    star_balance = db.Column(db.Integer, nullable=False, default=0)
+ 
 
 class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,6 +53,6 @@ class GameSession(db.Model):
     completed = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
     result = db.Column(db.String(4), nullable=True)
-    
+    reward = db.Column(db.Integer, nullable=False, default=0)
     user = db.relationship('User', backref=db.backref('game_sessions', lazy=True))
     word = db.relationship('Word', backref=db.backref('game_sessions', lazy=True))

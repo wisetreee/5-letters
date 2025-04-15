@@ -11,6 +11,7 @@ export type userData = {
   photo_url: string;
   username: string;
   role: userRole;
+  star_balance: number;
 };
 
 export type authData = {

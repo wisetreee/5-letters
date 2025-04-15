@@ -19,9 +19,12 @@ def load_words(file_path):
 
 def populate_database(file_path, app):
     with app.app_context():
+        if Word.query.first():
+            logging.info("Database already contains words. Skipping populate.")
+            return
         admin = User.query.filter_by(role="ADMIN").first()
         if not admin:
-            admin = User(username="admin", role="ADMIN", user_id = 1, photo_url="")
+            admin = User(username="admin", role="ADMIN", user_id = 1, photo_url="", star_balance=0)
             db.session.add(admin)
             db.session.commit()
             logging.info(f"Created 'admin' user with ID {admin.id}.")
@@ -32,13 +35,14 @@ def populate_database(file_path, app):
         added_count = 0
 
         db_words = Word.query.all()
-        s_words = [word.word for word in db_words]
+        # s_words = [word.word for word in db_words]
 
         for word in words:
-            if word not in s_words:
-                new_word = Word(word=word, length=len(word), added_by=admin.id)
-                db.session.add(new_word)
-                added_count += 1
+         exists = Word.query.filter_by(word=word).first()
+         if not exists:
+             new_word = Word(word=word, length=len(word), added_by=admin.id)
+             db.session.add(new_word)
+             added_count += 1
 
         if added_count > 0:
             db.session.commit()

@@ -95,7 +95,8 @@ def authenticate():
                 'user_id': user.user_id,
                 'username': user.username,
                 'photo_url': user.photo_url,
-                'role': user.role
+                'role': user.role,
+                'star_balance': user.star_balance
             },
             'auth_data': {
                 'auth_date': data.get('auth_date', [''])[0],
@@ -139,14 +140,15 @@ def get_daily_word():
 
     attempts = ATTEMPTS_BY_LENGTH.get(daily_word.length, 3)
 
-    session = GameSession(user_id=user_id, word_id=daily_word.id, attempts_left=attempts, completed=False)
+    session = GameSession(user_id=user_id, word_id=daily_word.id, attempts_left=attempts, reward=50, completed=False)
     db.session.add(session)
     db.session.commit()
 
     return jsonify({
         'game_id': session.id,
         'word_length': daily_word.length,
-        'attempts_left': attempts
+        'attempts_left': attempts,
+        'reward': session.reward,
     })
 
 @game_bp.route('/start', methods=['GET'])
@@ -167,11 +169,17 @@ def start_game():
 
     attempts = ATTEMPTS_BY_LENGTH.get(word.length, 3)
 
-    session = GameSession(user_id=user_id, word_id=word.id, attempts_left=attempts, completed=False)
+    session = GameSession(user_id=user_id, word_id=word.id, attempts_left=attempts, completed=False, reward=25)
     db.session.add(session)
     db.session.commit()
 
-    return jsonify({'game_id': session.id, 'word_length': word.length, 'attempts_left': attempts})
+    return jsonify(
+        {
+          'game_id': session.id, 
+          'word_length': word.length, 
+          'attempts_left': attempts,
+          'reward': session.reward
+        })
 
 
 @game_bp.route('/guess', methods=['POST'])
@@ -217,6 +225,8 @@ def guess_word():
     session.completed = session.attempts_left <= 0 or guess == correct_word
 
     if guess == correct_word:
+        winner = User.query.filter_by(user_id=session.user_id).first()
+        winner.star_balance += session.reward
         leaderboard_entry = Leaderboard.query.filter_by(user_id=session.user_id, season_id=get_latest_season()).first()
         if leaderboard_entry:
             leaderboard_entry.words_guessed += 1
@@ -228,7 +238,8 @@ def guess_word():
         return jsonify({
             'result': 'win',
             'feedback': result,
-            'attempts_used': ATTEMPTS_BY_LENGTH.get(len(word.word), 3) - session.attempts_left
+            'attempts_used': ATTEMPTS_BY_LENGTH.get(len(word.word), 3) - session.attempts_left,
+            'reward': session.reward
         })
 
     if session.attempts_left <= 0:

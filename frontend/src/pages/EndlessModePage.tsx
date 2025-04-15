@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 const EndlessModePage = () => {
   const startGame = useGameSessionStore((state) => state.startGame);
   const gameState = useGameSessionStore((state) => state.gameState);
+  const reward = useGameSessionStore((state) => state.reward);
   const [winModalOpen, setWinModalOpen] = useState(false);
   const [loseModalOpen, setLoseModalOpen] = useState(false);
   const user = useUserStore((state) => state.user);
@@ -35,7 +36,7 @@ const EndlessModePage = () => {
       <Keyboard />
       <button onClick={() => startGame()}>Start Game</button>
       <WinModal
-        rewardAmount={25}
+        rewardAmount={reward}
         isOpen={winModalOpen}
         onClose={() => setWinModalOpen(false)}
       />
