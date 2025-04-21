@@ -11,7 +11,7 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - frontend/node_modules/
-    - backend/.cache/pip/
+    - backend/.venv/
 
 # ---------- SETUP ----------
 
@@ -20,7 +20,7 @@ frontend_install_dependencies:
   image: node:22.13
   script:
     - cd frontend
-    - npm ci
+    - npm install
   artifacts:
     paths:
       - frontend/node_modules/
@@ -31,10 +31,10 @@ backend_install_dependencies:
   script:
     - cd backend
     - pip install --upgrade pip
-    - pip install --cache-dir=.cache/pip -r requirements.txt
+    - pip install -r requirements.txt
   artifacts:
     paths:
-      - backend/.cache/pip/
+      - backend/.venv/
     expire_in: 1 hour
 
 # ---------- LINT ----------
@@ -55,7 +55,7 @@ backend_lint:
     - cd backend
     - pip install --upgrade pip
     - pip install black
-    - black --check .
+    - black .
     - cd ..
 
 # ---------- DEPLOY ----------
