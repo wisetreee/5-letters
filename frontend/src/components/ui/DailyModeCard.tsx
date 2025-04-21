@@ -6,14 +6,18 @@ import {
 } from "@/components/ui/card";
 import EmojiIcon from "@/components/ui/EmojiIcon";
 
-const DailyTaskCard = () => {
+interface dailyModeCardProps {
+  reward: number;
+};
+
+const DailyModeCard:React.FC<dailyModeCardProps> = ({reward}) => {
   return (
     <Card>
       <CardHeader>
         <div className="flex justify-between items-start">
           <EmojiIcon width={48} height={48} src="/emoji/stopwatch.svg" />
           <div className="flex items-center gap-1">
-            <p>25</p>
+            <p>{reward}</p>
             <EmojiIcon width={24} height={24} src="/emoji/star.svg" />
           </div>
         </div>
@@ -29,4 +33,4 @@ const DailyTaskCard = () => {
   );
 };
 
-export default DailyTaskCard;
+export default DailyModeCard;

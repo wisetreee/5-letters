@@ -1,6 +1,8 @@
 import logging
 from database import db
 from models import Word, User
+import random
+from utils import calculate_rank_for_all
 
 logging.basicConfig(level=logging.INFO)
 
@@ -24,7 +26,7 @@ def populate_database(file_path, app):
             return
         admin = User.query.filter_by(role="ADMIN").first()
         if not admin:
-            admin = User(username="admin", role="ADMIN", user_id = 1, photo_url="", star_balance=0, rank=1)
+            admin = User(username="admin", role="ADMIN", user_id = 1, photo_url="", star_balance=0, rank=0)
             db.session.add(admin)
             db.session.commit()
             logging.info(f"Created 'admin' user with ID {admin.id}.")
@@ -49,3 +51,35 @@ def populate_database(file_path, app):
             logging.info(f"Successfully added {added_count} words to the database.")
         else:
             logging.info("No new words to add.")
+
+def generate_mock_users(app, n=50):
+
+    with app.app_context():
+        existing_users_count = User.query.count()
+        
+        if existing_users_count >= n:
+            print(f'{existing_users_count} users already exist — skipping mock generation.')
+            return
+        
+        users_to_create = n - existing_users_count
+        existing_user_ids = {u.user_id for u in User.query.all()}
+
+        for _ in range(users_to_create):
+            user_id = random.randint(10000, 99999)
+            while user_id in existing_user_ids:
+                user_id = random.randint(10000, 99999)
+            existing_user_ids.add(user_id)
+
+            user = User(
+                user_id=user_id,
+                username="mock_user_" + str(user_id),
+                photo_url="",
+                role='USER',
+                star_balance=random.randint(0, 500),
+                rank=0
+            )
+            db.session.add(user)
+
+        db.session.commit()
+        calculate_rank_for_all()
+        print(f'Added {users_to_create} mock users and updated ranks.')

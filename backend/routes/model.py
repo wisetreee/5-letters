@@ -34,5 +34,6 @@ def get_data(user_id):
             'daily': game_model.get_reward_by_mode(GameType.DAILY),
             'endless': game_model.get_reward_by_mode(GameType.ENDLESS)
         },
-        'rank': user.rank
+        'rank': user.rank,
+        'balance': user.star_balance,
     }

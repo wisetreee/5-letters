@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useUserStore } from "@/store/userStore";
 
+
 const Header = () => {
   const menuItems = [
     {
@@ -23,6 +24,7 @@ const Header = () => {
     },
   ];
   const IsMobile = useIsMobile();
+
   const [HowToPlayModalOpen, setHowToPlayModalOpen] = useState(false);
   const user = useUserStore((state) => state.user);
   return (

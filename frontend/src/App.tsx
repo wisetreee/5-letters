@@ -6,6 +6,7 @@ import { useInitApp } from "@/hooks/useInitApp";
 import { useAuth } from "./hooks/useAuth";
 import { SidebarProvider } from "./components/ui/sidebar";
 import Header from "./components/Header";
+import { SeasonPage } from "./pages/SeasonPage";
 
 const App = () => {
   const { appReady } = useInitApp();
@@ -24,6 +25,7 @@ const App = () => {
             <Routes>
               <Route index element={<HomePage />} />
               <Route path="/game/endless" element={<EndlessModePage />} />
+              <Route path="/season" element={<SeasonPage/>} />
             </Routes>
           </main>
         </SidebarProvider>

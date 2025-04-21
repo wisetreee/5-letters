@@ -6,18 +6,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import EmojiIcon from "./EmojiIcon";
+import { Link } from "react-router";
 
 interface seasonCardProps {
+  href: string;
+  seasonId: number;
   userRank: number;
-  seasonEndDate: number;
+  seasonEndDate: string;
   userBalance: number;
 };
-const SeasonCard: React.FC<seasonCardProps> = ({userRank, seasonEndDate, userBalance}) => {
+const SeasonCard: React.FC<seasonCardProps> = ({href, seasonId, userRank, seasonEndDate, userBalance}) => {
   return (
+    <Link to={href}>
     <Card className="bg-accent-1 hover:bg-accent-1-hover">
       <CardHeader>
         <CardTitle>
-          <h1>Сезон 1</h1>
+          <h1>Сезон {seasonId}</h1>
         </CardTitle>
         <CardDescription>
           <p className="text-white">
@@ -47,6 +51,7 @@ const SeasonCard: React.FC<seasonCardProps> = ({userRank, seasonEndDate, userBal
         </div>
       </CardContent>
     </Card>
+    </Link>
   );
 };
 

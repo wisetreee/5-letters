@@ -147,7 +147,7 @@
 }
 
 .dark {
-  --background: hsl(230 13% 14%);
+  --background: var(--color-main-1);
   --foreground: oklch(0.985 0 0);
   --card: var(--color-content-1);
   --card-hover: var(--color-content-1-hover);
@@ -158,7 +158,7 @@
   --primary-foreground: var(--color-content-1);
   --secondary: var(--color-content-1);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --muted: var(--color-content-1);
   --muted-foreground: oklch(0.708 0 0);
   --accent: var(--color-content-1-hover);
   --accent-foreground: oklch(0.985 0 0);

@@ -3,8 +3,8 @@ import { ApiResponse, sendRequest } from "./sendRequest";
 
 export function useRequest<Inp, Res>(
   path: string,
-  onError: (e: string) => void,
   method: "get" | "post" = "post",
+  onError: (e: string) => void,
   setLoading?: (loading: boolean) => void,
 ) {
   const request = useCallback(

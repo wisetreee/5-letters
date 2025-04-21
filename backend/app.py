@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from scheduler import start_scheduler
 from flask_cors import CORS
 from populate_words import populate_database
+from populate_words import generate_mock_users
 app = Flask(__name__)
 init_db(app)
 CORS(app, 
@@ -30,4 +31,5 @@ app.register_blueprint(game_bp)
 
 if __name__ == '__main__':
     populate_database("raw words.txt", app)
+    generate_mock_users(app)
     app.run(host="0.0.0.0", port=5000, debug=True)

@@ -23,6 +23,8 @@ def get_leaderboard_by_rank():
         )
     ).order_by(User.rank).all()
 
+    total_count = User.query.count()
+
     leaderboard = [
         {
             "user_id": user.user_id,
@@ -53,4 +55,24 @@ def get_leaderboard_by_rank():
     return jsonify({
         "leaderboard": leaderboard,
         "current_user": user_output,
+        "total_count": total_count
+    })
+
+@leaderboard_bp.route('/top3')
+def get_top3_leaderboard():
+    users = User.query.order_by(User.star_balance.desc()).limit(3).all()
+
+    leaderboard = [
+        {
+            "user_id": user.user_id,
+            "username": user.username,
+            "photo_url": user.photo_url,
+            "rank": user.rank,
+            "star_balance": user.star_balance
+        }
+        for user in users
+    ]
+
+    return jsonify({
+        "leaderboard": leaderboard
     })
