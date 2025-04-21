@@ -1,5 +1,5 @@
 from database import db
-from models import Season
+from models import Season, User
 from datetime import datetime, timedelta
 from sqlalchemy import desc
 
@@ -21,9 +21,30 @@ def get_latest_season():
     )
     
     db.session.add(new_season)
+
     try:
         db.session.commit()
+
         return new_season.id
     except Exception as e:
         db.session.rollback()
+        
         raise Exception(f"Failed to create new season: {str(e)}")
+
+
+def calculate_rank_for_all():
+    users = User.query.order_by(User.star_balance.desc()).all()
+
+    for idx, user in enumerate(users, start=1):
+        user.rank = idx
+
+    db.session.commit()
+
+def drop_user_stats_by_new_season():
+    users = db.session.query(User).all()
+
+    for idx, user in enumerate(users, start=1):
+        user.rank = idx
+        user.star_balance = 0
+    
+    db.session.commit()

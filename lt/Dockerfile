@@ -11,4 +11,4 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Запускаем скрипт при старте контейнера
-CMD ["/entrypoint.sh"]
+CMD ["sh", "/entrypoint.sh"]

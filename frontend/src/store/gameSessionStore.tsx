@@ -21,6 +21,7 @@ interface GameSessionState {
   currentRow: number;
   currentGuess: string;
   letterStates: LetterStates;
+  reward: number;
   isLoading: boolean;
   setLoading: (loading: boolean) => void;
   startGame: () => void;
@@ -34,11 +35,12 @@ const useGameSessionStore = create<GameSessionState>()(
     (set, get) => ({
       board: [],
       gameId: null,
-      wordLength: 5,
+      wordLength: 0,
       gameState: "inactive",
       currentRow: 0,
       currentGuess: "",
       letterStates: {},
+      reward: 0,
       isLoading: false,
       setLoading: (loading) => set({ isLoading: loading }),
 
@@ -59,9 +61,9 @@ const useGameSessionStore = create<GameSessionState>()(
           if (!response) {
             throw new Error("Данные не получены.");
           }
-          const { wordLength, attemptsLeft, gameId } = response;
+          const { wordLength, attemptsLeft, gameId, reward } = response;
           console.log(response);
-          console.log({ wordLength, attemptsLeft, gameId });
+          console.log({ wordLength, attemptsLeft, gameId, reward });
           set({
             board: Array.from({ length: attemptsLeft }, () =>
               Array.from({ length: wordLength }, () => ({
@@ -74,6 +76,7 @@ const useGameSessionStore = create<GameSessionState>()(
             gameState: "playing",
             currentRow: 0,
             letterStates: {},
+            reward,
           });
           console.log("Новое состояние:", get());
           console.log("установил доску");
@@ -112,7 +115,11 @@ const useGameSessionStore = create<GameSessionState>()(
             currentRow: state.currentRow + 1,
             letterStates: updateLetterStates(guessWord, feedback, letterStates),
             gameState:
-              result === "win" ? "win" : result === "lose" ? "lost" : "playing",
+              result === "win" ?
+               "win" : 
+              result === "lose" ? 
+              "lost" : 
+              "playing",
           }));
         } catch (error) {
           console.error("Ошибка при угадывании слова:", error);
@@ -162,11 +169,12 @@ const useGameSessionStore = create<GameSessionState>()(
         set({
           board: [],
           gameId: null,
-          wordLength: 5,
+          wordLength: 0,
           gameState: "inactive",
           currentRow: 0,
           currentGuess: "",
           letterStates: {},
+          reward: 0,
         });
       },
     }),

@@ -5,12 +5,14 @@ interface NewSessionDataResponse {
   word_length: number;
   attempts_left: number;
   game_id: number;
+  reward: number;
 }
 
 interface NewSessionData {
   wordLength: number;
   attemptsLeft: number;
   gameId: number;
+  reward: number;
 }
 
 export const getNewSession = async (
@@ -34,6 +36,7 @@ export const getNewSession = async (
       wordLength: data.word_length,
       attemptsLeft: data.attempts_left,
       gameId: data.game_id,
+      reward: data.reward,
     };
 
     return formattedData;
