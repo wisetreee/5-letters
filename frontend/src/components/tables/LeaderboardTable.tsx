@@ -41,7 +41,7 @@ interface LeaderboardTableProps {
                 <Avatar>
                 <AvatarImage src={user.photo_url} />
                 <AvatarFallback>
-                  <img src="/mock-user.svg" alt="user" />
+                  <img src="/mock-user-dark.svg" alt="user" />
                 </AvatarFallback>    
                 </Avatar>
                 {user.username}
@@ -61,7 +61,7 @@ interface LeaderboardTableProps {
                 <Avatar>
                 <AvatarImage src={currentUser.photo_url} />
                 <AvatarFallback>
-                    <img src="/mock-user.svg" alt="user" />
+                    <img src="/mock-user-dark.svg" alt="user" />
                 </AvatarFallback>    
                 </Avatar>
                 {currentUser.username}

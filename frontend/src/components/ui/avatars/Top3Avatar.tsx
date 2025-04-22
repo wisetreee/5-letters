@@ -16,14 +16,14 @@ export const Top3Avatar: React.FC<Top3AvatarProps> = ({user, place}) => {
       <div className='flex flex-col relative' >
       <Avatar className={
       cn(
-        "rounded-full border border-5",
+        "rounded-full border-5",
          place === 1 && "size-24 sm:size-32 border-accent-2",
          place === 2 && "size-12 sm:size-24 border-accent-3",
          place === 3 && "size-12 sm:size-24 border-accent-4"
         )}>
         <AvatarImage src={user.photo_url} />
         <AvatarFallback>
-          <img src="/mock-user.svg" alt="user" />
+          <img src="/mock-user-dark.svg" alt="user" />
         </AvatarFallback>    
       </Avatar>
       
