@@ -35,5 +35,5 @@ def get_data(user_id):
             'endless': game_model.get_reward_by_mode(GameType.ENDLESS)
         },
         'rank': user.rank,
-        'balance': user.star_balance,
+        'star_balance': user.star_balance,
     }

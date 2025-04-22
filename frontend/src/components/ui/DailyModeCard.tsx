@@ -8,9 +8,9 @@ import EmojiIcon from "@/components/ui/EmojiIcon";
 
 interface dailyModeCardProps {
   reward: number;
-};
+}
 
-const DailyModeCard:React.FC<dailyModeCardProps> = ({reward}) => {
+const DailyModeCard: React.FC<dailyModeCardProps> = ({ reward }) => {
   return (
     <Card>
       <CardHeader>

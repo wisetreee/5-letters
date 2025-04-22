@@ -25,7 +25,7 @@ const App = () => {
             <Routes>
               <Route index element={<HomePage />} />
               <Route path="/game/endless" element={<EndlessModePage />} />
-              <Route path="/season" element={<SeasonPage/>} />
+              <Route path="/season" element={<SeasonPage />} />
             </Routes>
           </main>
         </SidebarProvider>

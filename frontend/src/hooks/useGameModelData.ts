@@ -4,7 +4,9 @@ import { GameModelData } from "@/lib/types";
 import { getErrorMessage } from "@/lib/utils/getErrorMessage";
 
 export const useGameModelData = (userId: string | null) => {
-  const [gameModelData, setGameModelData] = useState<GameModelData | null>(null);
+  const [gameModelData, setGameModelData] = useState<GameModelData | null>(
+    null,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,22 +17,21 @@ export const useGameModelData = (userId: string | null) => {
     if (result) {
       setGameModelData(result);
     }
-  
   }, [userId]);
 
   useEffect(() => {
     if (userId) {
       try {
-      fetchGameModel();
-    } catch (error: unknown) {
-      const errorMessage = getErrorMessage(
+        fetchGameModel();
+      } catch (error: unknown) {
+        const errorMessage = getErrorMessage(
           error,
           "Неизвестная ошибка при получении данных об игре",
         );
-      setError(errorMessage);
+        setError(errorMessage);
+      }
     }
-    }
-  }, [fetchGameModel]);
+  }, [fetchGameModel, userId]);
 
   return {
     gameModelData,

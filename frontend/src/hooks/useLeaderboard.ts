@@ -20,7 +20,7 @@ export const useLeaderboard = () => {
 
       const response = await sendRequest<undefined, LeaderboardData>(
         `/api/leaderboard/?${params.toString()}`,
-        "get"
+        "get",
       );
 
       setLoading(false);
@@ -32,7 +32,7 @@ export const useLeaderboard = () => {
 
       setData(response.data);
     },
-    []
+    [],
   );
 
   return {

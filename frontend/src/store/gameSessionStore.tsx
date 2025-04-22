@@ -115,11 +115,7 @@ const useGameSessionStore = create<GameSessionState>()(
             currentRow: state.currentRow + 1,
             letterStates: updateLetterStates(guessWord, feedback, letterStates),
             gameState:
-              result === "win" ?
-               "win" : 
-              result === "lose" ? 
-              "lost" : 
-              "playing",
+              result === "win" ? "win" : result === "lose" ? "lost" : "playing",
           }));
         } catch (error) {
           console.error("Ошибка при угадывании слова:", error);

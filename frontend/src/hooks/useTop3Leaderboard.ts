@@ -11,7 +11,7 @@ export function useTop3Leaderboard() {
     "/api/leaderboard/top3",
     "get",
     (e) => setError(e),
-    setLoading
+    setLoading,
   );
 
   const getTop3 = async () => {

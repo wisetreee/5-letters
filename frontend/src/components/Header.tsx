@@ -9,7 +9,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useUserStore } from "@/store/userStore";
 
-
 const Header = () => {
   const menuItems = [
     {

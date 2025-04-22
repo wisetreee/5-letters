@@ -50,7 +50,7 @@ export const useAuth = (appReady: boolean) => {
       setAuthData(response.auth_data);
       setIsAuth(true);
       setAuthError(null);
-      retryCount.current = 0; 
+      retryCount.current = 0;
     } catch (error: unknown) {
       const errorMessage = getErrorMessage(
         error,

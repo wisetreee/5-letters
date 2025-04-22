@@ -8,10 +8,16 @@ import StatsCard from "@/components/ui/StatsCard";
 import { useGameModelData } from "@/hooks/useGameModelData";
 import { useUserStore } from "@/store/userStore";
 import { Skeleton } from "@/components/ui/skeleton"; // для лоадера
+import { makeRemainingDateString } from "@/lib/utils/makeRemainingDateString";
 
 const HomePage = () => {
   const user = useUserStore((state) => state.user);
-  const { gameModelData, loading, error, refetch } = useGameModelData(user?.user_id || null);
+  const { gameModelData, loading, error, refetch } = useGameModelData(
+    user?.user_id || null,
+  );
+  const remainingDateString = makeRemainingDateString(
+    gameModelData?.season.remaining_time || "",
+  );
 
   useEffect(() => {
     refetch();
@@ -47,13 +53,14 @@ const HomePage = () => {
         seasonId={gameModelData.season.id}
         userRank={gameModelData.rank}
         userBalance={gameModelData.star_balance}
-        seasonEndDate={gameModelData.season.remaining_time}
+        seasonEndDate={remainingDateString}
       />
       <PastSeasonCard />
       <div className="grid gap-2 sm:grid-cols-2">
-        <EndlessModeCard  
+        <EndlessModeCard
           href="/game/endless"
-          reward={gameModelData.rewards.endless} />
+          reward={gameModelData.rewards.endless}
+        />
         <DailyModeCard reward={gameModelData.rewards.daily} />
         <StatsCard />
         <NewWordsCard />

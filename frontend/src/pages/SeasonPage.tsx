@@ -1,5 +1,7 @@
-import { LeaderboardTable } from "@/components/tables/LeaderboardTable";
-import { Top3Avatar } from "@/components/ui/avatars/Top3Avatar";
+import { LeaderboardTable } from "@/components/tables/LeaderboardTable/LeaderboardTable";
+import { LeaderboardTableSkeleton } from "@/components/tables/LeaderboardTable/LeaderboardTableSkeleton";
+import { Top3Panel } from "@/components/top3panel/Top3Panel";
+import { Top3PanelSkeleton } from "@/components/top3panel/Top3PanelSkeleton";
 import {
   Pagination,
   PaginationContent,
@@ -17,25 +19,34 @@ export const SeasonPage: React.FC = () => {
   const user = useUserStore((state) => state.user);
   const currentUserId = user?.user_id;
 
-  const { data, loading: leaderboardLoading, error: leaderboardError, getLeaderboard } = useLeaderboard();
-  const { top3, loading: top3Loading, error: top3Error, getTop3 } = useTop3Leaderboard();
+  const {
+    data,
+    loading: leaderboardLoading,
+    error: leaderboardError,
+    getLeaderboard,
+  } = useLeaderboard();
+  const {
+    top3,
+    loading: top3Loading,
+    error: top3Error,
+    getTop3,
+  } = useTop3Leaderboard();
   const [startRank, setStartRank] = useState(1);
-  const [count, setCount] = useState(10);
+  const [count] = useState(10);
 
   const restData: LeaderboardData | undefined = data
-  ? {
-      ...data,
-      leaderboard: data.leaderboard.slice(3),
-    }
-  : undefined;
+    ? {
+        ...data,
+        leaderboard: data.leaderboard.slice(3),
+      }
+    : undefined;
 
   useEffect(() => {
     if (currentUserId) {
-       getLeaderboard(currentUserId, startRank, count);
-       getTop3();
-    };
-  }, [currentUserId, startRank, count]);
-  
+      getLeaderboard(currentUserId, startRank, count);
+      getTop3();
+    }
+  }, [currentUserId, startRank, count, getLeaderboard, getTop3]);
 
   const handlePrev = () => {
     if (startRank - count >= 1) {
@@ -58,13 +69,12 @@ export const SeasonPage: React.FC = () => {
         </p>
       </div>
 
-      <div className="flex w-full items-center">
-        {top3?.[1] && <Top3Avatar user={top3[1]} place={2} />}
-        {top3?.[0] && <Top3Avatar user={top3[0]} place={1} />}
-        {top3?.[2] && <Top3Avatar user={top3[2]} place={3} />}
-      </div>
-
-      {restData && <LeaderboardTable leaderboardData={restData} />}
+      {top3Loading ? <Top3PanelSkeleton /> : top3 && <Top3Panel top3={top3} />}
+      {leaderboardLoading ? (
+        <LeaderboardTableSkeleton />
+      ) : (
+        restData && <LeaderboardTable leaderboardData={restData} />
+      )}
 
       <Pagination>
         <PaginationContent>
@@ -77,14 +87,25 @@ export const SeasonPage: React.FC = () => {
         </PaginationContent>
       </Pagination>
       {top3Error && (
-        <div className="text-red-500 text-sm">
-          Не удалось загрузить топ-3. {" "}
-          <button
-            onClick={getTop3}
-            className="underline"
-          >
+        <div className="text-color-accent-red text-sm">
+          Не удалось загрузить топ-3.{" "}
+          <button onClick={getTop3} className="underline">
             Повторить
           </button>
+        </div>
+      )}
+
+      {leaderboardError && (
+        <div className="text-color-accent-red text-sm">
+          Не удалось загрузить лидерборд.{" "}
+          {currentUserId && (
+            <button
+              onClick={() => getLeaderboard(currentUserId, startRank, count)}
+              className="underline"
+            >
+              Повторить
+            </button>
+          )}
         </div>
       )}
     </section>
