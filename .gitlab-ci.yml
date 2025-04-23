@@ -66,6 +66,9 @@ docker_build_and_push:
   services:
     - docker:24.0-dind
   variables:
+    POSTGRES_USER: $POSTGRES_USER
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    POSTGRES_DB: $POSTGRES_DB
     DOCKER_TLS_CERTDIR: ""
   before_script:
     - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
