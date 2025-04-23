@@ -90,6 +90,7 @@ deploy_to_vm:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
     - eval $(ssh-agent -s)
+    - cat ~/.ssh/id_ed25519
     - ssh-add ~/.ssh/id_ed25519
     - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
   script:
