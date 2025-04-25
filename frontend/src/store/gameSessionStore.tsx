@@ -45,6 +45,7 @@ const useGameSessionStore = create<GameSessionState>()(
       setLoading: (loading) => set({ isLoading: loading }),
 
       startGame: async () => {
+        console.log("STARTING GAME");
         const userId = useUserStore.getState().user?.user_id;
         const { resetGame, setLoading } = get();
         if (!userId) {
@@ -63,7 +64,6 @@ const useGameSessionStore = create<GameSessionState>()(
           }
           const { wordLength, attemptsLeft, gameId, reward } = response;
           console.log(response);
-          console.log({ wordLength, attemptsLeft, gameId, reward });
           set({
             board: Array.from({ length: attemptsLeft }, () =>
               Array.from({ length: wordLength }, () => ({
@@ -86,6 +86,13 @@ const useGameSessionStore = create<GameSessionState>()(
       },
 
       makeGuess: async (guessWord: string) => {
+        console.log("GUESS WORD:", guessWord);
+        const { wordLength } = get();
+
+        if (!guessWord || guessWord.length < wordLength) {
+          console.warn("makeGuess: guessWord is incomplete", guessWord);
+          return;
+        }
         try {
           const { gameId, letterStates, board, currentRow } = get();
 
@@ -109,14 +116,18 @@ const useGameSessionStore = create<GameSessionState>()(
             letter,
             state: feedback[i] || "absent", // Если feedback[i] нет, подставляем "absent"
           }));
-
+          console.log("SETTING result TO:", result);
           set((state) => ({
+            
             board: updatedBoard,
             currentRow: state.currentRow + 1,
             letterStates: updateLetterStates(guessWord, feedback, letterStates),
             gameState:
               result === "win" ? "win" : result === "lose" ? "lost" : "playing",
+            currentGuess: "", 
           }));
+          console.log("SETTING GAME STATE TO:", get().gameState);
+          console.log("LETTER STATES UPDATED:", updateLetterStates(guessWord, feedback, letterStates));
         } catch (error) {
           console.error("Ошибка при угадывании слова:", error);
         }
@@ -127,15 +138,18 @@ const useGameSessionStore = create<GameSessionState>()(
           board,
           currentRow,
           gameState,
-          currentGuess,
           makeGuess,
         } = get();
+        const currentGuess = get().currentGuess;
+
+        console.log("KEY PRESSED:", key);
+        console.log("currentGuess BEFORE:", get().currentGuess);
         if (gameState !== "playing" || currentRow >= board.length) return;
 
         if (key.toUpperCase() === "ENTER") {
+          console.log("ENTER PRESSED. currentGuess:", currentGuess);
           if (currentGuess.length === wordLength) {
             makeGuess(currentGuess);
-            set({ currentGuess: "" });
           }
         } else if (key.toUpperCase() === "BACKSPACE") {
           set({ currentGuess: currentGuess.slice(0, -1) });
@@ -162,11 +176,12 @@ const useGameSessionStore = create<GameSessionState>()(
       },
 
       resetGame: () => {
+        console.log("RESETTING GAME");
         set({
           board: [],
           gameId: null,
           wordLength: 0,
-          gameState: "inactive",
+          // gameState: "inactive",
           currentRow: 0,
           currentGuess: "",
           letterStates: {},

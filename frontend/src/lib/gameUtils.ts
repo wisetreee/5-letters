@@ -4,8 +4,8 @@ export const compareWords = (
   guessWord: string,
   targetWord: string,
 ): TileState[] => {
-  const guessWordArray = guessWord.toLowerCase().split("");
-  const targetWordArray = targetWord.toLowerCase().split("");
+  const guessWordArray = guessWord.toUpperCase().split("");
+  const targetWordArray = targetWord.toUpperCase().split("");
   const states: TileState[] = Array(guessWordArray.length).fill("absent");
 
   // Создаём массив-флаг для отслеживания использованных букв в targetWord

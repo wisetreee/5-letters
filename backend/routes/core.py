@@ -172,7 +172,7 @@ def start_game():
     game_model = GameModel()
     attempts = game_model.ATTEMPTS_BY_LENGTH.get(word.length, 3)
 
-    session = GameSession(user_id=user_id, word_id=word.id, attempts_left=attempts, completed=False, reward=game_model.get_reward_by_mode(GameType.DAILY))
+    session = GameSession(user_id=user_id, word_id=word.id, attempts_left=attempts, completed=False, reward=game_model.get_reward_by_mode(GameType.ENDLESS))
     db.session.add(session)
     db.session.commit()
 

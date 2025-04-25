@@ -5,22 +5,23 @@ import { CornerDownLeft, Delete } from "lucide-react";
 import { useEffect } from "react";
 
 export default function Keyboard() {
+  
   const onKeyPress = useGameSessionStore((state) => state.onKeyPress);
   const letterStates = useGameSessionStore((state) => state.letterStates);
   const wordLength = useGameSessionStore((state) => state.wordLength);
   const currentGuess = useGameSessionStore((state) => state.currentGuess);
-
+  // console.log("KEYBOARD RERENDER, letterStates:", letterStates);
   useEffect(() => {
-    const onRealKeyboardDown = (e: KeyboardEvent) => onKeyPress(e.key);
+    const onRealKeyboardDown = (e: KeyboardEvent) => onKeyPress(e.key.toUpperCase()); 
     document.addEventListener("keydown", onRealKeyboardDown);
 
     return () => {
       document.removeEventListener("keydown", onRealKeyboardDown);
     };
-  });
+  }, []);
 
   const getKeyStyle = (letter: string) => {
-    const state = letterStates[letter];
+    const state = letterStates[letter.toUpperCase()];
     return cn(
       "w-6 h-9 sm:size-12 text-sm sm:text-2xl rounded-md font-regular uppercase transition-all duration-300",
       " active:scale-95",

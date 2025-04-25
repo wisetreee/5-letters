@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 def load_words(file_path):
     try:
-        with open(file_path, 'r', encoding='cp1251') as file:
+        with open(file_path, 'r') as file:
             words = [line.strip() for line in file.readlines() if 3 <= len(line.strip()) <= 10 and '-' not in line]
         logging.info(f"Loaded {len(words)} valid words from {file_path}.")
         return words

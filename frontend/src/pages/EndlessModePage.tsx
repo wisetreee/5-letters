@@ -16,11 +16,18 @@ const EndlessModePage = () => {
   const hasStarted = useRef(false);
 
   useEffect(() => {
+    console.log("USE EFFECT CHECK", {
+      gameState,
+      user,
+      hasStarted: hasStarted.current,
+    });
+
     if (gameState === "inactive" && user && !hasStarted.current) {
       hasStarted.current = true;
+      console.log("STARTING GAME");
       startGame();
     }
-  }, [gameState, user, startGame]);
+  }, [ user]);
 
   useEffect(() => {
     if (gameState === "win") {

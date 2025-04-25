@@ -41,12 +41,13 @@ export const SeasonPage: React.FC = () => {
       }
     : undefined;
 
-  useEffect(() => {
-    if (currentUserId) {
-      getLeaderboard(currentUserId, startRank, count);
-      getTop3();
-    }
-  }, [currentUserId, startRank, count, getLeaderboard, getTop3]);
+    useEffect(() => {
+      if (currentUserId) {
+        getLeaderboard(currentUserId, startRank, count);
+        getTop3();
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentUserId, startRank, count]);
 
   const handlePrev = () => {
     if (startRank - count >= 1) {
